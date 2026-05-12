@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilash Medellín</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <section id="inicio" class="hero">
+        <div class="container" data-aos="fade-up">
+            <h1 class="display-2 mb-3">Realza tu belleza con Dilash</h1>
+            <p class="lead mb-5">Especialistas en diseño de mirada y cuidado profesional.</p>
+            <a href="#servicios" class="btn btn-gold">Explorar Servicios</a>
+        </div>
+    </section>
+
+    <section id="conocenos" class="py-5 overflow-hidden">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-md-5 d-flex justify-content-center" data-aos="fade-right" data-aos-id="gallery-anim">
+                <div class="gallery-container position-relative">
+                    <img id="galeria-img" th:src="@{/img/conocenos1.jpg}" class="img-fluid shadow gallery-story-img" alt="Dilash Experience">
+                    <div class="gallery-controls">
+                        <button type="button" id="prevBtn" class="btn gallery-btn start-0 ms-2" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+                        <button type="button" id="nextBtn" class="btn gallery-btn end-0 me-2" aria-label="Siguiente"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7 ps-md-5 mt-5 mt-md-0">
+                <div class="d-flex align-items-center mb-3 text-gold" style="letter-spacing: 3px;">
+                    <i class="bi bi-stars me-2"></i>
+                    <span class="small fw-bold text-uppercase">Nuestra Filosofía</span>
+                </div>
+                <h2 id="typing-title" class="display-4 mb-4 fw-bold" style="min-height: 1.2em;"></h2>
+                <p id="typing-para-presentation" class="text-muted lead fw-bold mb-4" style="min-height: 2.5em; color: #1a1a1a !important;"></p>
+                <p id="typing-para-detail" class="text-muted mb-4" style="min-height: 3em;"></p>
+
+                <div class="row g-4 mt-2 opacity-0" id="highlights">
+                    <div class="col-6 d-flex align-items-center">
+                        <i class="bi bi-check2-circle text-gold fs-4 me-2"></i>
+                        <span class="small fw-bold text-uppercase">Técnicas Modernas</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center">
+                        <i class="bi bi-people text-gold fs-4 me-2"></i>
+                        <span class="small fw-bold text-uppercase">+500 Clientes Satisfechos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section id="servicios" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="display-4">Nuestros Servicios</h2>
+                <p class="text-muted">Elige el que es perfecto para ti</p>
+            </div>
+
+            <div th:if="${servicios != null}">
+                <h3 class="mb-4 border-start border-4 border-warning ps-3" data-aos="fade-right">Cejas</h3>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-3" th:each="s : ${servicios}" th:if="${s.categoriaServicio != null && s.categoriaServicio.nombre == 'Cejas'}">
+                        <div class="card service-card" data-aos="zoom-in">
+                            <img th:if="${s.imagenUrl != null}" th:src="@{${s.imagenUrl}}" class="card-img-top" alt="Servicio">
+                            <div class="card-body p-4 text-center">
+                                <h4 class="h5" th:text="${s.nombre}">Nombre</h4>
+                                <p class="service-price" th:text="${'$ ' + #numbers.formatInteger(s.precio, 0, 'POINT')}">$0</p>
+                                <p class="text-muted mb-4 small" th:text="${s.duracionMinutos + ' min de sesión'}">-- min</p>
+                                <a th:href="@{/agendar}" class="btn btn-outline-dark w-100">Agendar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="mb-4 border-start border-4 border-warning ps-3" data-aos="fade-right">Pestañas</h3>
+                <div class="row g-4">
+                    <div class="col-md-3" th:each="s : ${servicios}" th:if="${s.categoriaServicio != null && s.categoriaServicio.nombre == 'Pestañas'}">
+                        <div class="card service-card" data-aos="zoom-in">
+                            <img th:if="${s.imagenUrl != null}" th:src="@{${s.imagenUrl}}" class="card-img-top" alt="Servicio">
+                            <div class="card-body p-4 text-center">
+                                <h4 class="h5" th:text="${s.nombre}">Nombre</h4>
+                                <p class="service-price" th:text="${'$ ' + #numbers.formatInteger(s.precio, 0, 'POINT')}">$0</p>
+                                <p class="text-muted mb-4 small" th:text="${s.duracionMinutos + ' min de sesión'}">-- min</p>
+                                <a th:href="@{/agendar}" class="btn btn-outline-dark w-100">Agendar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${servicios == null || #lists.isEmpty(servicios)}" class="text-center py-5">
+                <p class="text-muted italic">Cargando catálogo de servicios...</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="elegir-dilash" class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h2 class="display-4 mb-4">¿Por qué elegir <span class="text-gold">Dilash</span>?</h2>
+                    <p class="lead text-muted mb-4">Nos dedicamos a perfeccionar tu mirada con un enfoque que combina salud, estética y bienestar. Recibe la mejor atención en nuestro estudio privado. Tambien contamos con servicio a domicilio</p>
+                    
+                    <div class="d-flex mb-4">
+                        <div class="icon-box me-4">
+                            <i class="bi bi-shield-check fs-1 text-gold"></i>
+                        </div>
+                        <div>
+                            <h4 class="h5 fw-bold">Comodidad y Privacidad</h4>
+                            <p class="text-muted small">Disfruta de tus servicios de belleza en la privacidad y confort de tu hogar.</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex mb-4">
+                        <div class="icon-box me-4">
+                            <i class="bi bi-clock-history fs-1 text-gold"></i>
+                        </div>
+                        <div>
+                            <h4 class="h5 fw-bold">Resultados Duraderos</h4>
+                            <p class="text-muted small">Técnicas avanzadas que aseguran que tu diseño se mantenga impecable por más tiempo.</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="icon-box me-4">
+                            <i class="bi bi-emoji-smile fs-1 text-gold"></i>
+                        </div>
+                        <div>
+                            <h4 class="h5 fw-bold">Atención Personalizada</h4>
+                            <p class="text-muted small">Cada servicio está completamente adaptado a tus necesidades y preferencias individuales.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 d-flex justify-content-center" data-aos="zoom-in">
+                    <div class="experience-container position-relative">
+                        <div class="exp-badge badge-top shadow">
+                            <span class="d-block h3 fw-bold mb-0">100%</span>
+                            <span class="x-small">GARANTÍA</span>
+                        </div>
+                        <div class="exp-badge badge-left shadow">
+                            <i class="bi bi-calendar-check d-block fs-4"></i>
+                            <span class="x-small fw-bold">RESERVA FÁCIL</span>
+                        </div>
+                        <div class="exp-badge badge-right shadow">
+                            <span class="d-block h3 fw-bold mb-0">5.0★</span>
+                            <span class="x-small">CALIFICACIÓN</span>
+                        </div>
+                        <img th:src="@{/img/logo.jpg}" class="img-fluid rounded-4 shadow-lg main-img" alt="Experiencia Dilash">
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-5" style="background:#faf8f4;">
+        <div class="container py-4" style="max-width:820px;">
+
+            <!-- Encabezado -->
+            <div class="text-center mb-5" data-aos="fade-up">
+                <div class="d-inline-flex align-items-center gap-2 mb-3"
+                    style="background:#fff8e1;border-radius:30px;padding:.4rem 1.1rem;">
+                    <i class="bi bi-patch-question" style="color:var(--gold);font-size:1rem;"></i>
+                    <span style="font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">Preguntas frecuentes</span>
+                </div>
+                <h2 class="display-5 fw-bold mb-2">¿Tienes dudas?</h2>
+                <p class="text-muted">Aquí resolvemos las más comunes. Si no encuentras tu respuesta,
+                    <a href="https://wa.me/573024813620" target="_blank"
+                    style="color:var(--gold);font-weight:600;">escríbenos por WhatsApp</a>.
+                </p>
+            </div>
+
+            <!-- Acordeón -->
+            <div class="accordion faq-accordion" id="faqAccordion" data-aos="fade-up" data-aos-delay="100">
+
+                <!-- 1 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-person-check"></i></span>
+                        <span>¿Debo tener una cuenta para agendar una cita?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq1" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Sí. Crear tu cuenta es rápido y gratuito — solo necesitas tu nombre, correo y
+                            teléfono. Al registrarte puedes ver el historial de tus citas y cancelarlas
+                            si lo necesitas desde tu panel personal.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-credit-card"></i></span>
+                        <span>¿Cómo funciona el proceso de pago?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq2" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            El proceso tiene dos momentos:
+                            <ol class="mt-2 mb-0 ps-3" style="line-height:2.1;">
+                                <li><strong>Abono de $20.000</strong> al agendar tu cita, para reservar tu espacio. Se realiza por <strong>Nequi</strong> o transferencia <strong>Bancolombia</strong>.</li>
+                                <li><strong>Saldo restante presencial</strong> al finalizar el servicio — en efectivo, Nequi o transferencia Bancolombia.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-receipt"></i></span>
+                        <span>¿Hay costos adicionales?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq3" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Los materiales de trabajo están incluidos en el precio del servicio, sin ningún
+                            cobro extra. El único costo adicional aplica para el
+                            <strong>servicio a domicilio</strong>, cuyo valor varía según la distancia y las
+                            condiciones del día.
+                            Siempre te informamos el valor antes de confirmar.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-brush"></i></span>
+                        <span>¿Puedo ir maquillada o con extensiones previas?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq4" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Te pedimos llegar <strong>sin maquillaje en la zona de ojos y cejas</strong>
+                            (máscara de pestañas, delineador, base u otros productos). Esto permite que
+                            los productos adhieran correctamente y el resultado dure más tiempo.<br><br>
+                            Si tienes extensiones previas, menciónalo al agendar — en algunos casos es
+                            necesario retirarlas primero, y contamos con ese servicio disponible.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-eye"></i></span>
+                        <span>¿Los resultados se ven naturales o muy marcados?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq5" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Depende completamente de lo que busques. Nuestros servicios se adaptan a tu
+                            estilo: desde un realce sutil y natural hasta un diseño más definido y expresivo.
+                            Antes de comenzar hacemos una breve consulta para entender tu preferencia y
+                            trabajar de acuerdo con tus facciones y el resultado que quieres lograr.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq6" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-x-circle"></i></span>
+                        <span>¿Qué pasa si necesito cancelar o reagendar mi cita?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq6" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Puedes cancelar tu cita directamente desde tu panel en <em>"Mis citas"</em>.
+                            Para reagendar, escríbenos por
+                            <a href="https://wa.me/573024813620" target="_blank"
+                            style="color:var(--gold);font-weight:600;">WhatsApp</a>
+                            y coordinamos una nueva fecha según disponibilidad. Ten en cuenta que el abono
+                            no es reembolsable en cancelaciones de último momento.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq7" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-geo-alt"></i></span>
+                        <span>¿Ofrecen servicio a domicilio? ¿A qué zonas?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq7" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Sí, llegamos a cualquier parte de Medellín en zonas de fácil acceso.
+                            El costo varía según la distancia y las condiciones del día. Si tienes dudas
+                            sobre tu zona, pregúntanos antes de agendar por
+                            <a href="https://wa.me/573024813620" target="_blank"
+                            style="color:var(--gold);font-weight:600;">WhatsApp</a> — con gusto te confirmamos.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8 -->
+                <div class="faq-item">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq8" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-heart-pulse"></i></span>
+                        <span>¿Qué cuidados debo tener después del servicio?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq8" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Durante las primeras <strong>24 horas</strong> es importante:
+                            <ul class="mt-2 mb-2 ps-3" style="line-height:2.1;">
+                                <li>No mojar la zona (ducha directa, piscina, vapor, sauna).</li>
+                                <li>No aplicar maquillaje ni cosméticos en ojos y cejas.</li>
+                                <li>Evitar frotar o rascar la zona tratada.</li>
+                                <li>Alejarse de fuentes de calor intenso (secador, sol directo).</li>
+                                <li>No dormir boca abajo ni con el rostro contra la almohada.</li>
+                            </ul>
+                            Pasadas las 24 horas puedes retomar tu rutina habitual. Aplicar un sérum
+                            nutritivo e hidratar la zona regularmente prolonga los resultados.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9 -->
+                <div class="faq-item" style="margin-bottom:0;">
+                    <button class="faq-btn" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#faq9" aria-expanded="false">
+                        <span class="faq-icon"><i class="bi bi-arrow-repeat"></i></span>
+                        <span>¿Cada cuánto debo hacer mantenimiento?</span>
+                        <i class="bi bi-chevron-down faq-arrow ms-auto"></i>
+                    </button>
+                    <div id="faq9" class="collapse" data-bs-parent="#faqAccordion">
+                        <div class="faq-body">
+                            Recomendamos visita cada <strong>15 a 20 días</strong>, dependiendo del
+                            crecimiento natural de cada clienta y del servicio realizado. Cada caso es
+                            diferente, así que coordinamos el mantenimiento individualmente por WhatsApp
+                            para darte la recomendación más adaptada a ti. 💛
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /faqAccordion -->
+
+            <!-- CTA inferior -->
+            <div class="text-center mt-5" data-aos="fade-up">
+                <p class="text-muted mb-3">¿Tu pregunta no está aquí?</p>
+                <a href="https://wa.me/573024813620" target="_blank" rel="noopener noreferrer"
+                class="btn btn-gold px-4 py-2 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-whatsapp"></i> Escríbenos por WhatsApp
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="container text-center">
+            <h2 class="mb-3" style="color: var(--gold); letter-spacing: 2px;">DILASH</h2>
+
+            <p class="mb-2">Especialistas en Miradas | Medellín, Antioquia</p>
+
+            <a href="https://www.google.com/maps/place/Dilash+%E2%80%93+Pesta%C3%B1as+Pelo+a+Pelo+%E2%80%A2+Lifting+%E2%80%A2+Cejas+y+Laminado+%E2%80%A2+Depilaci%C3%B3n+y+Sombreado/@6.2419417,-75.6636139,12z/data=!3m1!4b1!4m6!3m5!1s0x8e442b92f3e2d47b:0x2f8eab8841d9e561!8m2!3d6.2419482!4d-75.5812115!16s%2Fg%2F11y3l0ztk5?entry=ttu&g_ep=EgoyMDI2MDQyNy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none small d-block mb-2">
+                📍 Carrera 84 #37b-87 Simón Bolívar, Laureles
+            </a>
+
+            <a href="tel:+573024813620" class="text-white text-decoration-none small d-block mb-3">
+                📞 +57 302 481 3620
+            </a>
+
+            <div class="mt-4">
+                <a href="https://www.instagram.com/dilashmedellin" target="_blank" class="text-white mx-3 fs-4"><i class="bi bi-instagram"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=100063755715969" target="_blank" class="text-white mx-3 fs-4"><i class="bi bi-facebook"></i></a>
+                <a href="https://wa.me/573024813620" target="_blank" class="text-white mx-3 fs-4"><i class="bi bi-whatsapp"></i></a>
+            </div>
+
+            <hr class="my-4 opacity-25">
+            <p class="small opacity-50 mb-0">© 2026 Dilash. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

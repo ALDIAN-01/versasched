@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head-links}">
+    <meta charset="UTF-8">
+    <title>Mi cuenta | Dilash</title>
+</head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container py-4 py-md-5" style="max-width:760px;">
+
+    <!-- Flash messages -->
+    <div th:if="${exito}" class="alert alert-success d-flex align-items-center gap-2 mb-4 alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${exito}"></span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger d-flex align-items-center gap-2 mb-4 alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Tarjeta de perfil -->
+    <div class="card p-4 mb-4">
+        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle">
+                    <span th:text="${#strings.substring(usuario.nombre,0,1)}">U</span>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-bold" th:text="'Hola, ' + ${usuario.nombre} + ' ' + ${usuario.apellido} + ' 👋'">Hola</h5>
+                    <p class="text-muted mb-0 small" th:text="${usuario.correo}">correo</p>
+                    <p class="text-muted mb-0 small">
+                        <i class="bi bi-telephone me-1"></i>
+                        <span th:text="${usuario.telefono}">tel</span>
+                    </p>
+                </div>
+            </div>
+            <a href="/perfil" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 flex-shrink-0">
+                <i class="bi bi-pencil-square"></i> Editar perfil
+            </a>
+        </div>
+    </div>
+
+    <!-- Encabezado citas -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="mb-0 fw-bold">Mis citas</h5>
+        <a href="/agendar" class="btn btn-gold btn-sm px-3 d-flex align-items-center gap-1">
+            <i class="bi bi-plus-lg"></i> Agendar nueva cita
+        </a>
+    </div>
+
+    <!-- Sin citas -->
+    <div th:if="${#lists.isEmpty(citas)}" class="card p-5 text-center">
+        <i class="bi bi-calendar-x text-muted mb-3" style="font-size:2.5rem;"></i>
+        <p class="text-muted mb-3">Aún no tienes citas agendadas.</p>
+        <a href="/agendar" class="btn btn-gold btn-sm px-4 mx-auto">Agenda tu primera cita</a>
+    </div>
+
+    <!-- Con citas -->
+    <div th:unless="${#lists.isEmpty(citas)}">
+        <div class="card p-3 mb-3 cita-card" th:each="cita : ${citas}">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1">
+
+                    <!-- Fecha y hora -->
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="fw-bold" th:text="${#temporals.format(cita.fecha,'dd/MM/yyyy')}">fecha</span>
+                        <span class="text-muted">•</span>
+                        <span class="text-muted small">
+                            <i class="bi bi-clock me-1"></i>
+                            <span th:text="${cita.horario?.hora}">hora</span>
+                        </span>
+                    </div>
+
+                    <!-- Lugar -->
+                    <p class="mb-1 small text-muted" th:if="${cita.lugar != null}">
+                        <i class="bi bi-geo-alt me-1"></i>
+                        <span th:text="${cita.lugar}"></span>
+                        <span th:if="${cita.direccionServicio != null and cita.direccionServicio != 'Local Dilash'}"
+                              th:text="' — ' + ${cita.direccionServicio}"></span>
+                    </p>
+
+                    <!-- Observaciones -->
+                    <p class="mb-1 small text-muted"
+                       th:if="${cita.observaciones != null and !cita.observaciones.isBlank()}">
+                        <i class="bi bi-chat-left-text me-1"></i>
+                        <span th:text="${cita.observaciones}"></span>
+                    </p>
+
+                    <!-- Servicios solicitados -->
+                    <div class="mb-1" th:if="${cita.detalles != null and !cita.detalles.isEmpty()}">
+                        <span class="small text-muted"><i class="bi bi-scissors me-1"></i>Servicios:</span>
+                        <span th:each="d, iterStat : ${cita.detalles}" class="small fw-semibold">
+                            <span th:text="${d.servicio.nombre}"></span><span th:unless="${iterStat.last}">, </span>
+                        </span>
+                    </div>
+
+                    <!-- Total -->
+                    <p class="mb-0 fw-semibold small" th:if="${cita.total != null}" style="color:var(--gold);">
+                        <i class="bi bi-tag me-1"></i>
+                        Total: $<span th:text="${#numbers.formatInteger(cita.total,0,'POINT')}">0</span>
+                    </p>
+                </div>
+
+                <!-- Derecha: badge + botón cancelar -->
+                <div class="d-flex flex-column align-items-end gap-2">
+
+                    <!-- Badge estado -->
+                    <span class="badge"
+                          th:text="${cita.estado.nombre}"
+                          th:classappend="${cita.estado.nombre == 'Agendada'}   ? 'bg-warning text-dark' :
+                                          (${cita.estado.nombre == 'Realizada'} ? 'bg-success'           : 'bg-danger')">
+                    </span>
+
+                    <!-- Botón cancelar — solo si está Agendada -->
+                    <button th:if="${cita.estado.nombre == 'Agendada'}"
+                            class="btn-cancelar"
+                            th:data-id="${cita.idCita}"
+                            th:data-fecha="${#temporals.format(cita.fecha,'dd/MM/yyyy')}"
+                            onclick="pedirCancelacion(this)">
+                        <i class="bi bi-x-circle me-1"></i>Cancelar
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nota informativa -->
+    <p class="text-muted text-center small mt-3" th:unless="${#lists.isEmpty(citas)}">
+        <i class="bi bi-info-circle me-1"></i>
+        ¿Necesitas reagendar? Cancela tu cita y escríbenos por
+        <a href="https://wa.me/573024813620" target="_blank" style="color:var(--gold);">WhatsApp</a>
+        para coordinar una nueva fecha.
+    </p>
+</div>
+
+<!-- Modal confirmación cancelar -->
+<div class="modal fade" id="modalCancelar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">¿Cancelar tu cita?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="/cliente/cancelar" id="formCancelar" style="margin:0;">
+                <div class="modal-body">
+                    <p class="text-muted mb-2">
+                        Estás cancelando tu cita del <strong id="modalFecha">—</strong>.
+                        El equipo admin recibirá tu solicitud como cita "Cancelada" y podrá eliminarla o reagendarla según lo que dejaste en tu motivo.
+                    </p>
+                    <div class="mb-3">
+                        <label for="motivoCancelacion" class="form-label small">Motivo de cancelación (opcional)</label>
+                        <textarea class="form-control" name="motivoCancelacion" id="motivoCancelacion" rows="3"
+                                  placeholder="Describe brevemente por qué cancelas y si quieres reagendar."></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="quiereReagendar" value="true"
+                               id="quiereReagendar">
+                        <label class="form-check-label small" for="quiereReagendar">
+                            Sí, deseo reagendar esta cita
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 gap-2">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Volver</button>
+                    <input type="hidden" name="idCita" id="cancelarIdCita">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle me-1"></i>Sí, cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-circle {
+    width:52px; height:52px; border-radius:50%;
+    background:var(--gold); color:white;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem; font-weight:700; font-family:'Playfair Display',serif;
+    flex-shrink:0;
+}
+.cita-card { transition:box-shadow .2s; }
+.cita-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.12); }
+.btn-cancelar {
+    background:none; border:1.5px solid #fca5a5; color:#dc2626;
+    border-radius:8px; padding:.3rem .75rem; font-size:.75rem;
+    font-family:'Montserrat',sans-serif; font-weight:600;
+    cursor:pointer; transition:all .2s; white-space:nowrap;
+}
+.btn-cancelar:hover { background:#fee2e2; border-color:#dc2626; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+const modalCancelar = new bootstrap.Modal(document.getElementById('modalCancelar'));
+
+function pedirCancelacion(btn) {
+    document.getElementById('cancelarIdCita').value = btn.dataset.id;
+    document.getElementById('modalFecha').textContent = btn.dataset.fecha;
+    document.getElementById('motivoCancelacion').value = '';
+    document.getElementById('quiereReagendar').checked = false;
+    modalCancelar.show();
+}
+</script>
+</body>
+</html>

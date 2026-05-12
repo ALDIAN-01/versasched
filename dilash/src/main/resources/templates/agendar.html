@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments :: head-links}">
+    <meta charset="UTF-8">
+    <title>Agendar Cita | Dilash</title>
+</head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container py-4 py-md-5" style="max-width:680px;">
+
+    <!-- Error de horario ocupado -->
+    <div th:if="${param.error}" class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Ese horario ya no está disponible. Por favor selecciona otro.</span>
+    </div>
+
+    <div class="card p-4 p-md-5">
+        <h3 class="mb-1" style="font-family:'Playfair Display',serif;">Agendar cita</h3>
+        <p class="text-muted small mb-4">Completa los datos para reservar tu cita</p>
+
+        <form method="post" action="/agendar" id="agendarForm" novalidate>
+
+            <!-- ══ SERVICIOS ══════════════════════════════════════════ -->
+            <h6 class="text-uppercase fw-bold mb-3" style="letter-spacing:1px;color:var(--gold);font-size:0.75rem;">
+                <i class="bi bi-scissors me-1"></i> Servicios
+            </h6>
+
+            <div class="mb-2" th:if="${servicios == null || #lists.isEmpty(servicios)}">
+                <p class="text-muted small">No hay servicios disponibles en este momento.</p>
+            </div>
+
+            <!-- Agrupados por categoría -->
+            <div th:if="${servicios != null and !#lists.isEmpty(servicios)}">
+
+                <!-- Cejas -->
+                <p class="mb-2 fw-semibold small text-muted text-uppercase" style="letter-spacing:.5px;">Cejas</p>
+                <div class="row g-2 mb-3">
+                    <div class="col-12 col-sm-6"
+                         th:each="s : ${servicios}"
+                         th:if="${s.categoriaServicio != null and s.categoriaServicio.nombre == 'Cejas'}">
+                        <label class="service-option w-100">
+                            <input type="checkbox" name="servicios" th:value="${s.idServicio}"
+                                   class="svc-check" th:data-precio="${s.precio}">
+                            <div class="service-label">
+                                <span class="svc-name" th:text="${s.nombre}">Servicio</span>
+                                <span class="svc-price" th:text="'$' + ${#numbers.formatInteger(s.precio,0,'POINT')}">$0</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Pestañas -->
+                <p class="mb-2 fw-semibold small text-muted text-uppercase" style="letter-spacing:.5px;">Pestañas</p>
+                <div class="row g-2 mb-3">
+                    <div class="col-12 col-sm-6"
+                         th:each="s : ${servicios}"
+                         th:if="${s.categoriaServicio != null and s.categoriaServicio.nombre == 'Pestañas'}">
+                        <label class="service-option w-100">
+                            <input type="checkbox" name="servicios" th:value="${s.idServicio}"
+                                   class="svc-check" th:data-precio="${s.precio}">
+                            <div class="service-label">
+                                <span class="svc-name" th:text="${s.nombre}">Servicio</span>
+                                <span class="svc-price" th:text="'$' + ${#numbers.formatInteger(s.precio,0,'POINT')}">$0</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Total estimado -->
+                <div id="totalBox" class="total-box mb-4" style="display:none;">
+                    <span class="text-muted small">Total estimado</span>
+                    <span class="total-amount" id="totalAmount">$0</span>
+                    <small class="text-muted d-block" style="font-size:0.7rem;"></small>
+                </div>
+                <div id="svcError" class="text-danger small mb-3" style="display:none;">
+                    <i class="bi bi-exclamation-circle me-1"></i>Selecciona al menos un servicio.
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- ══ FECHA Y HORA ══════════════════════════════════════ -->
+            <h6 class="text-uppercase fw-bold mb-3" style="letter-spacing:1px;color:var(--gold);font-size:0.75rem;">
+                <i class="bi bi-calendar3 me-1"></i> Fecha y hora
+            </h6>
+
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-sm-6">
+                    <label class="form-label fw-semibold small">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" class="form-control" required>
+                    <div class="invalid-feedback">Selecciona una fecha.</div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <label class="form-label fw-semibold small">Hora disponible</label>
+                    <select name="idHorario" id="idHorario" class="form-select" required>
+                        <option value="">-- Selecciona una hora --</option>
+                        <option th:each="h : ${horarios}"
+                                th:value="${h.idHorario}"
+                                th:text="${h.hora}"></option>
+                    </select>
+                    <div class="invalid-feedback">Selecciona un horario.</div>
+                    <small class="text-muted" style="font-size:0.75rem;" th:if="${#lists.isEmpty(horarios)}">
+                        ⚠️ No hay horarios disponibles para esa fecha.
+                    </small>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- ══ LUGAR ═════════════════════════════════════════════ -->
+            <h6 class="text-uppercase fw-bold mb-3" style="letter-spacing:1px;color:var(--gold);font-size:0.75rem;">
+                <i class="bi bi-geo-alt me-1"></i> Lugar del servicio
+            </h6>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold small">Dónde te atendemos</label>
+                <select name="lugar" id="lugar" class="form-select" onchange="toggleDireccion()" required>
+                    <option value="">Selecciona una opción</option>
+                    <option value="Local">Local Dilash — Laureles, Medellín</option>
+                    <option value="Mi direccion">Mi dirección (domicilio)</option>
+                </select>
+                <div class="invalid-feedback">Selecciona un lugar.</div>
+            </div>
+
+            <div id="direccionDiv" class="mb-3" style="display:none;">
+                <label class="form-label fw-semibold small">Tu dirección completa</label>
+                <input type="text" name="direccion" id="direccion" class="form-control"
+                       placeholder="Ej: Calle 50 #30-10, Apto 201, El Poblado">
+                <div class="invalid-feedback">Ingresa tu dirección.</div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold small">Observaciones <span class="text-muted fw-normal">(opcional)</span></label>
+                <textarea name="observaciones" class="form-control" rows="3"
+                          placeholder="Ej: alergia a ciertos productos, preferencias especiales…"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gold w-100 py-3 fw-semibold" style="border-radius:10px;font-size:1rem;">
+                <i class="bi bi-calendar-check me-2"></i>Confirmar cita
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<style>
+/* ── Service checkbox cards ── */
+.service-option { display:block; cursor:pointer; }
+.service-option input[type="checkbox"] { display:none; }
+.service-label {
+    display:flex; justify-content:space-between; align-items:center;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    background: white;
+}
+.service-option input:checked + .service-label {
+    border-color: var(--gold);
+    background: #fffbee;
+    color: #7a5c00;
+    font-weight: 600;
+}
+.service-option:hover .service-label { border-color: var(--gold); }
+.svc-price { color: var(--gold); font-weight: 700; white-space:nowrap; margin-left:.5rem; }
+
+/* ── Total box ── */
+.total-box {
+    display:flex; align-items:center; justify-content:space-between;
+    background: #fffbee; border: 1.5px solid var(--gold);
+    border-radius: 10px; padding: 0.75rem 1.25rem;
+    flex-wrap: wrap; gap: 0.25rem;
+}
+.total-amount { font-size:1.4rem; font-weight:700; color:var(--gold); }
+
+/* ── Form controls ── */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1.5px solid #e0e0e0;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    font-family: 'Montserrat', sans-serif;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+}
+.form-control.is-invalid, .form-select.is-invalid { border-color: #dc3545; }
+.invalid-feedback { font-size: 0.78rem; }
+</style>
+
+<script>
+function toggleDireccion() {
+    const select = document.getElementById('lugar');
+    const div    = document.getElementById('direccionDiv');
+    div.style.display = select.value === 'Mi direccion' ? 'block' : 'none';
+}
+
+// Bloquear fechas pasadas
+document.addEventListener('DOMContentLoaded', function() {
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha').setAttribute('min', hoy);
+
+    const inputFecha = document.getElementById('fecha');
+    const selectHorario = document.getElementById('idHorario');
+
+    inputFecha.addEventListener('change', function() {
+        const fechaSeleccionada = this.value;
+        if (!fechaSeleccionada) return;
+
+        // Llamada a la API que creamos en el controlador
+        fetch(`/api/citas/horarios-ocupados?fecha=${fechaSeleccionada}`)
+            .then(response => response.json())
+            .then(idsOcupados => {
+                // 1. Resetear el select y habilitar todas las opciones
+                Array.from(selectHorario.options).forEach(option => {
+                    if (option.value === "") return; // No deshabilitar el placeholder
+
+                    const isOcupado = idsOcupados.includes(parseInt(option.value));
+                    
+                    if (isOcupado) {
+                        option.disabled = true;
+                        option.text = option.text.replace(" (Ocupado)", "") + " (Ocupado)";
+                        option.style.color = "#999";
+                    } else {
+                        option.disabled = false;
+                        option.text = option.text.replace(" (Ocupado)", "");
+                        option.style.color = "initial";
+                    }
+                });
+
+                // 2. Si el horario que estaba seleccionado ahora está ocupado, resetear el select
+                if (selectHorario.selectedOptions[0]?.disabled) {
+                    selectHorario.value = "";
+                }
+            })
+            .catch(error => console.error('Error al verificar horarios:', error));
+    });
+
+    // Recalcular total al marcar/desmarcar
+    document.querySelectorAll('.svc-check').forEach(function(chk) {
+        chk.addEventListener('change', calcularTotal);
+    });
+});
+
+function calcularTotal() {
+    const checks = document.querySelectorAll('.svc-check:checked');
+    let total = 0;
+    checks.forEach(function(c) {
+        total += parseFloat(c.dataset.precio) || 0;
+    });
+    const box = document.getElementById('totalBox');
+    const amt = document.getElementById('totalAmount');
+    if (checks.length > 0) {
+        box.style.display = 'flex';
+        amt.textContent = '$' + total.toLocaleString('es-CO');
+    } else {
+        box.style.display = 'none';
+    }
+}
+
+// Validación al enviar
+document.getElementById('agendarForm').addEventListener('submit', function(e) {
+    let ok = true;
+
+    // Al menos un servicio
+    const checks = document.querySelectorAll('.svc-check:checked');
+    const svcError = document.getElementById('svcError');
+    if (checks.length === 0) {
+        svcError.style.display = 'block';
+        ok = false;
+    } else {
+        svcError.style.display = 'none';
+    }
+
+    // Fecha
+    const fecha = document.getElementById('fecha');
+    if (!fecha.value) { fecha.classList.add('is-invalid'); ok = false; }
+    else fecha.classList.remove('is-invalid');
+
+    // Horario
+    const horario = document.getElementById('idHorario');
+    if (!horario.value) { horario.classList.add('is-invalid'); ok = false; }
+    else horario.classList.remove('is-invalid');
+
+    // Lugar
+    const lugar = document.getElementById('lugar');
+    if (!lugar.value) { lugar.classList.add('is-invalid'); ok = false; }
+    else lugar.classList.remove('is-invalid');
+
+    // Dirección (si aplica)
+    const direccion = document.getElementById('direccion');
+    if (lugar.value === 'Mi direccion' && !direccion.value.trim()) {
+        direccion.classList.add('is-invalid'); ok = false;
+    } else {
+        direccion.classList.remove('is-invalid');
+    }
+
+    if (!ok) e.preventDefault();
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
