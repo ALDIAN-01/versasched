@@ -104,8 +104,8 @@
                     </p>
                 </div>
 
-                <!-- Derecha: badge + botón cancelar -->
-                <div class="d-flex flex-column align-items-end gap-2">
+                <!-- Derecha: badge -->
+                <div class="d-flex flex-column align-items-end">
 
                     <!-- Badge estado -->
                     <span class="badge"
@@ -113,15 +113,6 @@
                           th:classappend="${cita.estado.nombre == 'Agendada'}   ? 'bg-warning text-dark' :
                                           (${cita.estado.nombre == 'Realizada'} ? 'bg-success'           : 'bg-danger')">
                     </span>
-
-                    <!-- Botón cancelar — solo si está Agendada -->
-                    <button th:if="${cita.estado.nombre == 'Agendada'}"
-                            class="btn-cancelar"
-                            th:data-id="${cita.idCita}"
-                            th:data-fecha="${#temporals.format(cita.fecha,'dd/MM/yyyy')}"
-                            onclick="pedirCancelacion(this)">
-                        <i class="bi bi-x-circle me-1"></i>Cancelar
-                    </button>
 
                 </div>
             </div>
@@ -131,49 +122,10 @@
     <!-- Nota informativa -->
     <p class="text-muted text-center small mt-3" th:unless="${#lists.isEmpty(citas)}">
         <i class="bi bi-info-circle me-1"></i>
-        ¿Necesitas reagendar? Cancela tu cita y escríbenos por
+        ¿Necesitas cancelar o reagendar? Escríbenos por
         <a href="https://wa.me/573024813620" target="_blank" style="color:var(--gold);">WhatsApp</a>
-        para coordinar una nueva fecha.
+        para coordinar.
     </p>
-</div>
-
-<!-- Modal confirmación cancelar -->
-<div class="modal fade" id="modalCancelar" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius:14px;border:none;">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">¿Cancelar tu cita?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="post" action="/cliente/cancelar" id="formCancelar" style="margin:0;">
-                <div class="modal-body">
-                    <p class="text-muted mb-2">
-                        Estás cancelando tu cita del <strong id="modalFecha">—</strong>.
-                        El equipo admin recibirá tu solicitud como cita "Cancelada" y podrá eliminarla o reagendarla según lo que dejaste en tu motivo.
-                    </p>
-                    <div class="mb-3">
-                        <label for="motivoCancelacion" class="form-label small">Motivo de cancelación (opcional)</label>
-                        <textarea class="form-control" name="motivoCancelacion" id="motivoCancelacion" rows="3"
-                                  placeholder="Describe brevemente por qué cancelas y si quieres reagendar."></textarea>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="quiereReagendar" value="true"
-                               id="quiereReagendar">
-                        <label class="form-check-label small" for="quiereReagendar">
-                            Sí, deseo reagendar esta cita
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 pt-0 gap-2">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Volver</button>
-                    <input type="hidden" name="idCita" id="cancelarIdCita">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-x-circle me-1"></i>Sí, cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 <style>
@@ -186,28 +138,8 @@
 }
 .cita-card { transition:box-shadow .2s; }
 .cita-card:hover { box-shadow:0 6px 20px rgba(0,0,0,.12); }
-.btn-cancelar {
-    background:none; border:1.5px solid #fca5a5; color:#dc2626;
-    border-radius:8px; padding:.3rem .75rem; font-size:.75rem;
-    font-family:'Montserrat',sans-serif; font-weight:600;
-    cursor:pointer; transition:all .2s; white-space:nowrap;
-}
-.btn-cancelar:hover { background:#fee2e2; border-color:#dc2626; }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<script>
-const modalCancelar = new bootstrap.Modal(document.getElementById('modalCancelar'));
-
-function pedirCancelacion(btn) {
-    document.getElementById('cancelarIdCita').value = btn.dataset.id;
-    document.getElementById('modalFecha').textContent = btn.dataset.fecha;
-    document.getElementById('motivoCancelacion').value = '';
-    document.getElementById('quiereReagendar').checked = false;
-    modalCancelar.show();
-}
-</script>
 </body>
 </html>
