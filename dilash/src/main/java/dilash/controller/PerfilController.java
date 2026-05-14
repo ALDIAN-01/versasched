@@ -1,7 +1,7 @@
 package dilash.controller;
 
 import dilash.model.Usuario;
-import dilash.repository.UsuarioRepository;
+import dilash.service.PerfilService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class PerfilController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private PerfilService perfilService;
 
     // ── GET /perfil ───────────────────────────────────────────────────────────
 
@@ -28,8 +28,7 @@ public class PerfilController {
     public String verPerfil(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
         if (usuario == null) return "redirect:/login";
-        // Refrescar desde la BD para mostrar datos actualizados
-        usuario = usuarioRepository.findById(usuario.getIdUsuario()).orElse(usuario);
+        usuario = perfilService.obtenerPerfil(usuario.getIdUsuario());
         model.addAttribute("usuario", usuario);
         return "perfil";
     }
@@ -47,20 +46,14 @@ public class PerfilController {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
         if (usuario == null) return "redirect:/login";
 
-        // Verificar que el correo no esté en uso por otro usuario
-        Usuario existente = usuarioRepository.findByCorreo(correo);
-        if (existente != null && !existente.getIdUsuario().equals(usuario.getIdUsuario())) {
-            usuario = usuarioRepository.findById(usuario.getIdUsuario()).orElse(usuario);
+        try {
+            usuario = perfilService.actualizarPerfil(usuario.getIdUsuario(), nombre, apellido, correo, telefono);
+        } catch (IllegalArgumentException e) {
+            usuario = perfilService.obtenerPerfil(usuario.getIdUsuario());
             model.addAttribute("usuario", usuario);
-            model.addAttribute("error", "Ese correo ya está registrado por otra cuenta.");
+            model.addAttribute("error", e.getMessage());
             return "perfil";
         }
-
-        usuario.setNombre(nombre.trim());
-        usuario.setApellido(apellido.trim());
-        usuario.setCorreo(correo.trim());
-        usuario.setTelefono(telefono.trim());
-        usuarioRepository.save(usuario);
 
         // Actualizar la sesión con los nuevos datos
         session.setAttribute("usuarioLogueado", usuario);
@@ -82,29 +75,18 @@ public class PerfilController {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
         if (usuario == null) return "redirect:/login";
 
-        usuario = usuarioRepository.findById(usuario.getIdUsuario()).orElse(usuario);
-        model.addAttribute("usuario", usuario);
-
-        // Verificar contraseña actual
-        if (!usuario.getContrasena().equals(contrasenaActual)) {
-            model.addAttribute("error", "La contraseña actual no es correcta.");
+        Usuario usuarioActualizado;
+        try {
+            perfilService.cambiarContrasena(usuario.getIdUsuario(), contrasenaActual, contrasenaNueva, confirmarNueva);
+            usuarioActualizado = perfilService.obtenerPerfil(usuario.getIdUsuario());
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("usuario", perfilService.obtenerPerfil(usuario.getIdUsuario()));
+            model.addAttribute("error", e.getMessage());
             return "perfil";
         }
 
-        // Verificar que coincidan las nuevas
-        if (!contrasenaNueva.equals(confirmarNueva)) {
-            model.addAttribute("error", "Las contraseñas nuevas no coinciden.");
-            return "perfil";
-        }
-
-        if (contrasenaNueva.length() < 6) {
-            model.addAttribute("error", "La nueva contraseña debe tener al menos 6 caracteres.");
-            return "perfil";
-        }
-
-        usuario.setContrasena(contrasenaNueva);
-        usuarioRepository.save(usuario);
-        session.setAttribute("usuarioLogueado", usuario);
+        session.setAttribute("usuarioLogueado", usuarioActualizado);
+        model.addAttribute("usuario", usuarioActualizado);
 
         model.addAttribute("exito", "Contraseña actualizada correctamente.");
         return "perfil";

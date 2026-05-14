@@ -1,7 +1,7 @@
 package dilash.controller;
 
 import dilash.model.Usuario;
-import dilash.repository.UsuarioRepository;
+import dilash.service.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
 
     @GetMapping("/login")
     public String mostrarLogin() {
@@ -28,22 +28,15 @@ public class LoginController {
                             HttpSession session,
                             Model model) {
 
-        Usuario usuario = usuarioRepository.findByCorreo(correo);
+        Usuario usuario = usuarioService.autenticar(correo, contrasena);
 
-        if (usuario != null && usuario.getContrasena().equals(contrasena)) {
+        if (usuario != null) {
 
             session.setAttribute("usuarioLogueado", usuario);
 
             // 🔥 REDIRECCIÓN INTELIGENTE
-            if (redirect != null && !redirect.isEmpty()) {
-                return "redirect:" + redirect;
-            }
-
-            if (usuario.getTipoUsuario().equals("ADMIN")) {
-                return "redirect:/admin";
-            } else {
-                return "redirect:/cliente";
-            }
+            String redirectUrl = usuarioService.determinarRedireccionPostLogin(usuario, redirect);
+            return "redirect:" + redirectUrl;
 
         } else {
             model.addAttribute("error", "Credenciales incorrectas");

@@ -1,10 +1,8 @@
 package dilash.controller;
 
-import dilash.model.Horario;
 import dilash.model.Usuario;
-import dilash.repository.HorarioRepository;
-import dilash.repository.ServicioRepository;
 import dilash.service.CitaService;
+import dilash.service.ServicioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,10 +36,7 @@ public class AgendarController {
     private CitaService citaService;
 
     @Autowired
-    private HorarioRepository horarioRepository;
-
-    @Autowired
-    private ServicioRepository servicioRepository;
+    private ServicioService servicioService;
 
     // ── GET /agendar ──────────────────────────────────────────────────────────
 
@@ -53,15 +48,8 @@ public class AgendarController {
         if (usuario == null) return "redirect:/login";
 
         model.addAttribute("usuario", usuario);
-        model.addAttribute("servicios", servicioRepository.findAll()); // ← AÑADE ESTA LÍNEA
-
-        List<Horario> horarios;
-        if (fecha != null && !fecha.isBlank()) {
-            horarios = citaService.getHorariosDisponibles(LocalDate.parse(fecha));
-        } else {
-            horarios = horarioRepository.findAll();
-        }
-        model.addAttribute("horarios", horarios);
+        model.addAttribute("servicios", servicioService.getTodos());
+        model.addAttribute("horarios", citaService.obtenerHorariosDisponibles(fecha));
         return "agendar";
     }
 
@@ -81,34 +69,16 @@ public class AgendarController {
             return "redirect:/login";
         }
 
-        LocalDate fechaParsed = LocalDate.parse(fecha);
-
-        // Determinar dirección según lugar
-        String direccionFinal = null;
-        if ("Mi direccion".equals(lugar) && direccion != null && !direccion.isBlank()) {
-            direccionFinal = direccion;
-        } else if ("Local".equals(lugar)) {
-            direccionFinal = "Local Dilash";
-        }
-
-        // 1. Crear cabecera de cita via SP (estado inicial = Agendada, id=1)
         Long idCita;
         try {
-            idCita = citaService.crearCita(usuario.getIdUsuario(), fechaParsed, idHorario, direccionFinal, lugar, observaciones);
+            idCita = citaService.reservarCita(usuario.getIdUsuario(), fecha, idHorario, lugar, direccion, observaciones, servicios);
         } catch (Exception e) {
             // Volvemos a cargar los datos necesarios para la vista sin redireccionar
             model.addAttribute("usuario", usuario);
-            model.addAttribute("servicios", servicioRepository.findAll());
-            model.addAttribute("horarios", citaService.getHorariosDisponibles(fechaParsed));
+            model.addAttribute("servicios", servicioService.getTodos());
+            model.addAttribute("horarios", citaService.obtenerHorariosDisponibles(fecha));
             model.addAttribute("error", "Ese horario ya fue tomado. Por favor, elige otro.");
             return "agendar"; // Retorna el template, manteniendo los datos en los inputs
-        }
-
-        // 2. Agregar cada servicio via SP (el trigger actualiza el total automáticamente)
-        if (servicios != null) {
-            for (Long idServicio : servicios) {
-                citaService.agregarServicio(idCita, idServicio);
-            }
         }
 
         return "redirect:/cliente";

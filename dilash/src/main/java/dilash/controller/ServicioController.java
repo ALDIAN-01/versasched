@@ -1,7 +1,7 @@
 package dilash.controller;
 
 import dilash.model.Servicio;
-import dilash.repository.ServicioRepository;
+import dilash.service.ServicioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,12 +14,12 @@ import java.util.List;
 public class ServicioController {
 
     @Autowired
-    private ServicioRepository servicioRepository;
+    private ServicioService servicioService;
 
     @GetMapping("/")
     public String listarServicios(Model model) {
 
-        List<Servicio> servicios = servicioRepository.findAll();
+        List<Servicio> servicios = servicioService.getTodos();
 
         model.addAttribute("servicios", servicios);
 

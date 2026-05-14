@@ -1,7 +1,7 @@
 package dilash.controller;
 
 import dilash.model.Usuario;
-import dilash.repository.UsuarioRepository;
+import dilash.service.UsuarioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class RegistroController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioService usuarioService;
 
     @GetMapping("/registro")
     public String mostrarRegistro() {
@@ -28,21 +28,12 @@ public class RegistroController {
                                     @RequestParam String tipoUsuario,
                                     Model model) {
 
-        // 🔒 Verificar si ya existe
-        if (usuarioRepository.findByCorreo(correo) != null) {
-            model.addAttribute("error", "El correo ya está registrado");
+        try {
+            usuarioService.registrarUsuario(nombre, apellido, correo, telefono, contrasena, tipoUsuario);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
             return "registro";
         }
-
-        Usuario usuario = new Usuario();
-        usuario.setNombre(nombre);
-        usuario.setApellido(apellido);
-        usuario.setCorreo(correo);
-        usuario.setTelefono(telefono);
-        usuario.setContrasena(contrasena);
-        usuario.setTipoUsuario(tipoUsuario);
-
-        usuarioRepository.save(usuario);
 
         return "redirect:/login";
     }
