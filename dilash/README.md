@@ -145,7 +145,7 @@ Este proyecto fue desarrollado como parte de mi curso de Desarrollo Web en mi qu
 
 ## Autor
 
-- **Nombre**: [Aldian Oropeza]
+- **Nombre**: Aldian Oropeza
 - **Correo**: aldian.oropeza@correo.tdea.edu.co
 - **GitHub**: https://github.com/ALDIAN-01
 
