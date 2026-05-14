@@ -30,50 +30,6 @@ El sistema soporta dos tipos de usuarios principales:
   - Maven (gestión de dependencias y construcción)
   - Git (control de versiones)
 
-## Requisitos del Sistema
-
-- JDK 17 o superior
-- Maven 3.6+
-- Microsoft SQL Server (local o remoto)
-- Navegador web moderno (Chrome, Firefox, Edge)
-
-## Instalación y Configuración
-
-### 1. Clonar el Repositorio
-```bash
-git clone https://github.com/ALDIAN-01/dilash_corregido.git
-cd dilash_corregido/dilash
-```
-
-### 2. Configurar la Base de Datos
-- Asegúrate de tener Microsoft SQL Server instalado y ejecutándose.
-- Crea una base de datos llamada `dilash_db` (o el nombre que prefieras).
-- Ejecuta los scripts SQL para crear las tablas y procedimientos almacenados (ubicados en `src/main/resources/sql/` si existen, o configura manualmente según el esquema).
-
-### 3. Configurar la Conexión a la Base de Datos
-Edita el archivo `src/main/resources/application.properties`:
-```properties
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=dilash_db
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
-spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
-```
-
-### 4. Construir y Ejecutar la Aplicación
-```bash
-# Compilar el proyecto
-mvn clean compile
-
-# Ejecutar la aplicación
-mvn spring-boot:run
-```
-
-La aplicación estará disponible en `http://localhost:8080`.
-
 ## Estructura del Proyecto
 
 ```
@@ -181,19 +137,15 @@ La aplicación utiliza Microsoft SQL Server. La conexión se configura en `appli
   - `EstadoCita`: Estados posibles de las citas (pendiente, confirmada, cancelada, etc.).
   - `DetalleCita`: Detalles específicos de cada cita (servicios seleccionados).
 
-Se utilizan procedimientos almacenados para operaciones complejas, accedidos vía JDBC.
+Se utilizan procedimientos almacenados y triggers para operaciones complejas, accedidos vía JDBC.
 
-## Contribución
+## Info
 
-Este proyecto fue desarrollado como parte de un curso de Desarrollo Web. Para contribuciones, por favor contacta al autor.
+Este proyecto fue desarrollado como parte de mi curso de Desarrollo Web en mi quinto semestre estudiando Ingeniería de Software en el Tecnológico de Antioquia.
 
 ## Autor
 
-- **Nombre**: [Tu Nombre]
-- **Correo**: [tu.email@ejemplo.com]
-- **GitHub**: [https://github.com/ALDIAN-01]
-
-## Licencia
-
-Este proyecto es de uso educativo y no tiene licencia específica.
+- **Nombre**: [Aldian Oropeza]
+- **Correo**: aldian.oropeza@correo.tdea.edu.co
+- **GitHub**: https://github.com/ALDIAN-01
 
