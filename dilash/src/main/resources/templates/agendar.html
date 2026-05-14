@@ -7,7 +7,7 @@
 <body>
 <nav th:replace="~{fragments :: navbar}"></nav>
 
-<div class="container py-4 py-md-5" style="max-width:680px;">
+<div class="container-agendar">
 
     <!-- Error de horario ocupado -->
     <div th:if="${param.error}" class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
@@ -16,13 +16,13 @@
     </div>
 
     <div class="card p-4 p-md-5">
-        <h3 class="mb-1" style="font-family:'Playfair Display',serif;">Agendar cita</h3>
+        <h3 class="mb-1">Agendar cita</h3>
         <p class="text-muted small mb-4">Completa los datos para reservar tu cita</p>
 
         <form method="post" action="/agendar" id="agendarForm" novalidate>
 
             <!-- ══ SERVICIOS ══════════════════════════════════════════ -->
-            <h6 class="text-uppercase fw-bold mb-3" style="letter-spacing:1px;color:var(--gold);font-size:0.75rem;">
+            <h6 class="text-uppercase fw-bold mb-3 section-title">
                 <i class="bi bi-scissors me-1"></i> Servicios
             </h6>
 
@@ -34,7 +34,7 @@
             <div th:if="${servicios != null and !#lists.isEmpty(servicios)}">
 
                 <!-- Cejas -->
-                <p class="mb-2 fw-semibold small text-muted text-uppercase" style="letter-spacing:.5px;">Cejas</p>
+                <p class="mb-2 fw-semibold small text-muted categoria-label">Cejas</p>
                 <div class="row g-2 mb-3">
                     <div class="col-12 col-sm-6"
                          th:each="s : ${servicios}"
@@ -51,7 +51,7 @@
                 </div>
 
                 <!-- Pestañas -->
-                <p class="mb-2 fw-semibold small text-muted text-uppercase" style="letter-spacing:.5px;">Pestañas</p>
+                <p class="mb-2 fw-semibold small text-muted categoria-label">Pestañas</p>
                 <div class="row g-2 mb-3">
                     <div class="col-12 col-sm-6"
                          th:each="s : ${servicios}"
@@ -68,12 +68,12 @@
                 </div>
 
                 <!-- Total estimado -->
-                <div id="totalBox" class="total-box mb-4" style="display:none;">
+                <div id="totalBox" class="total-box mb-4">
                     <span class="text-muted small">Total estimado</span>
                     <span class="total-amount" id="totalAmount">$0</span>
-                    <small class="text-muted d-block" style="font-size:0.7rem;"></small>
+                    <small class="text-muted d-block" id="totalLabel"></small>
                 </div>
-                <div id="svcError" class="text-danger small mb-3" style="display:none;">
+                <div id="svcError" class="svc-error">
                     <i class="bi bi-exclamation-circle me-1"></i>Selecciona al menos un servicio.
                 </div>
             </div>
@@ -81,7 +81,7 @@
             <hr class="my-4">
 
             <!-- ══ FECHA Y HORA ══════════════════════════════════════ -->
-            <h6 class="text-uppercase fw-bold mb-3" style="letter-spacing:1px;color:var(--gold);font-size:0.75rem;">
+            <h6 class="text-uppercase fw-bold mb-3 section-title">
                 <i class="bi bi-calendar3 me-1"></i> Fecha y hora
             </h6>
 
@@ -193,17 +193,21 @@
 </style>
 
 <script>
+/**
+ * Muestra/oculta el campo de dirección según la selección de "lugar".
+ */
 function toggleDireccion() {
     const select = document.getElementById('lugar');
-    const div    = document.getElementById('direccionDiv');
+    const div = document.getElementById('direccionDiv');
     div.style.display = select.value === 'Mi direccion' ? 'block' : 'none';
 }
 
-// Bloquear fechas pasadas
 document.addEventListener('DOMContentLoaded', function() {
+    // Bloquear fechas pasadas en el input
     const hoy = new Date().toISOString().split('T')[0];
     document.getElementById('fecha').setAttribute('min', hoy);
 
+    // Cargar horarios disponibles cuando cambia la fecha
     const inputFecha = document.getElementById('fecha');
     const selectHorario = document.getElementById('idHorario');
 
@@ -211,16 +215,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const fechaSeleccionada = this.value;
         if (!fechaSeleccionada) return;
 
-        // Llamada a la API que creamos en el controlador
+        // Obtener horarios ocupados de la API
         fetch(`/api/citas/horarios-ocupados?fecha=${fechaSeleccionada}`)
             .then(response => response.json())
             .then(idsOcupados => {
-                // 1. Resetear el select y habilitar todas las opciones
+                // Actualizar estado de cada horario: disponible u ocupado
                 Array.from(selectHorario.options).forEach(option => {
-                    if (option.value === "") return; // No deshabilitar el placeholder
-
-                    const isOcupado = idsOcupados.includes(parseInt(option.value));
+                    if (option.value === "") return;
                     
+                    const isOcupado = idsOcupados.includes(parseInt(option.value));
                     if (isOcupado) {
                         option.disabled = true;
                         option.text = option.text.replace(" (Ocupado)", "") + " (Ocupado)";
@@ -232,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                // 2. Si el horario que estaba seleccionado ahora está ocupado, resetear el select
+                // Resetear selección si el horario actual está ocupado
                 if (selectHorario.selectedOptions[0]?.disabled) {
                     selectHorario.value = "";
                 }
@@ -240,12 +243,15 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error al verificar horarios:', error));
     });
 
-    // Recalcular total al marcar/desmarcar
+    // Recalcular total al marcar/desmarcar servicios
     document.querySelectorAll('.svc-check').forEach(function(chk) {
         chk.addEventListener('change', calcularTotal);
     });
 });
 
+/**
+ * Calcula y muestra el total de servicios seleccionados.
+ */
 function calcularTotal() {
     const checks = document.querySelectorAll('.svc-check:checked');
     let total = 0;
@@ -262,11 +268,14 @@ function calcularTotal() {
     }
 }
 
-// Validación al enviar
+/**
+ * Valida el formulario antes de enviar.
+ * Requiere: servicio(s), fecha, hora, lugar y dirección (si aplica).
+ */
 document.getElementById('agendarForm').addEventListener('submit', function(e) {
     let ok = true;
 
-    // Al menos un servicio
+    // Validar: al menos un servicio
     const checks = document.querySelectorAll('.svc-check:checked');
     const svcError = document.getElementById('svcError');
     if (checks.length === 0) {
@@ -276,22 +285,22 @@ document.getElementById('agendarForm').addEventListener('submit', function(e) {
         svcError.style.display = 'none';
     }
 
-    // Fecha
+    // Validar: fecha
     const fecha = document.getElementById('fecha');
     if (!fecha.value) { fecha.classList.add('is-invalid'); ok = false; }
     else fecha.classList.remove('is-invalid');
 
-    // Horario
+    // Validar: horario
     const horario = document.getElementById('idHorario');
     if (!horario.value) { horario.classList.add('is-invalid'); ok = false; }
     else horario.classList.remove('is-invalid');
 
-    // Lugar
+    // Validar: lugar
     const lugar = document.getElementById('lugar');
     if (!lugar.value) { lugar.classList.add('is-invalid'); ok = false; }
     else lugar.classList.remove('is-invalid');
 
-    // Dirección (si aplica)
+    // Validar: dirección (si es "Mi direccion")
     const direccion = document.getElementById('direccion');
     if (lugar.value === 'Mi direccion' && !direccion.value.trim()) {
         direccion.classList.add('is-invalid'); ok = false;

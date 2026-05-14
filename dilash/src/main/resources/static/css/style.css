@@ -257,3 +257,272 @@ footer a:hover {
     color: var(--gold) !important;
     transition: 0.3s;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CLIENTE - Perfil y Citas
+   ═════════════════════════════════════════════════════════════════════ */
+
+.container-cliente {
+    max-width: 760px;
+    width: min(100%, 760px);
+    margin: 2rem auto 3rem;
+    padding: 2rem 1.5rem;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.08);
+}
+
+.avatar-circle {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--gold); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: 700; font-family: 'Playfair Display', serif;
+    flex-shrink: 0;
+}
+
+.cita-card {
+    transition: box-shadow 0.2s;
+    background: white; border-radius: 12px; padding: 1.2rem;
+    border: 1px solid #f0f0f0;
+}
+.cita-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+}
+
+.icon-empty-state { font-size: 2.5rem; }
+.text-danger-link { color: var(--gold); text-decoration: none; }
+.text-danger-link:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ADMIN - Panel de Administración
+   ═════════════════════════════════════════════════════════════════════ */
+
+.topbar {
+    background: white; border-bottom: 1px solid #eee; padding: 0.9rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.brand { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.4rem; letter-spacing: 2px; }
+.user-info { font-size: 0.85rem; color: #666; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.user-icon { font-size: 1.1rem; color: var(--gold); }
+
+.btn-logout {
+    background: none; border: 1.5px solid #ddd; border-radius: 8px;
+    padding: 0.35rem 0.8rem; font-size: 0.8rem; color: #666; cursor: pointer;
+    font-family: 'Montserrat', sans-serif; transition: all 0.2s; text-decoration: none;
+}
+.btn-logout:hover { border-color: #e74c3c; color: #e74c3c; }
+
+.main-content { padding: 1.5rem; max-width: 1280px; margin: 0 auto; }
+
+/* Tarjetas de estadísticas */
+.stat-card {
+    background: white; border-radius: 14px; padding: 1.3rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07); border-left: 4px solid var(--gold); height: 100%;
+}
+.stat-num { font-size: 1.9rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-top: 0.25rem; }
+.stat-sub { font-size: 0.75rem; color: #aaa; margin-top: 0.3rem; }
+
+.stat-agendadas-border { border-color: #f59e0b; }
+.stat-agendadas-num { color: #f59e0b; }
+.stat-realizadas-border { border-color: #22c55e; }
+.stat-realizadas-num { color: #22c55e; }
+.stat-ingresos-border { border-color: #059669; }
+.stat-ingresos-num { color: #059669; }
+
+/* Barra de filtros */
+.filters-bar {
+    background: white; border-radius: 14px; padding: 1.1rem 1.4rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,.07); margin-bottom: 1.5rem;
+    display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;
+}
+.filters-bar label {
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    color: #888; display: block; margin-bottom: 0.3rem;
+}
+.filter-input, .filter-select {
+    border: 1.5px solid #e5e5e5; border-radius: 8px; padding: 0.45rem 0.85rem;
+    font-size: 0.85rem; font-family: 'Montserrat', sans-serif; outline: none;
+    transition: border-color 0.2s; background: white;
+}
+.filter-input:focus, .filter-select:focus { border-color: var(--gold); }
+
+.btn-filter {
+    background: var(--gold); color: white; border: none; border-radius: 8px;
+    padding: 0.5rem 1.1rem; font-size: 0.85rem; font-weight: 600;
+    font-family: 'Montserrat', sans-serif; cursor: pointer; transition: background 0.2s; white-space: nowrap;
+}
+.btn-filter:hover { background: var(--dark-gold); }
+
+.btn-clear {
+    background: none; border: 1.5px solid #ddd; border-radius: 8px;
+    padding: 0.5rem 1rem; font-size: 0.82rem; color: #888; cursor: pointer;
+    font-family: 'Montserrat', sans-serif; transition: all 0.2s; white-space: nowrap;
+}
+.btn-clear:hover { border-color: #999; color: #555; }
+
+.contador-resultado { font-size: 0.82rem; color: #666; padding: 0.5rem 0; }
+
+/* Tabla de citas */
+.table-card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07); overflow: hidden; }
+.table-header {
+    padding: 1.1rem 1.4rem; display: flex; align-items: center;
+    justify-content: space-between; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; gap: 0.75rem;
+}
+.table-header h6 {
+    font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+    margin: 0; color: #333;
+}
+.table-responsive { overflow-x: auto; }
+
+.citas-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+.citas-table th {
+    background: #fafafa; font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #aaa; font-weight: 700;
+    padding: 0.8rem 1rem; border-bottom: 1px solid #eee; white-space: nowrap;
+}
+.citas-table td {
+    padding: 0.8rem 1rem; border-bottom: 1px solid #f5f5f5; font-size: 0.87rem; vertical-align: middle;
+}
+.citas-table tr:last-child td { border-bottom: none; }
+.citas-table tbody tr:hover td { background: #fdfaf3; }
+
+.cell-total { font-weight: 600; color: var(--gold); }
+.cell-cancelada { font-size: 0.75rem; color: #991b1b; font-weight: 400; margin-top: 0.25rem; line-height: 1.3; }
+.icon-cancelada { color: #dc2626; }
+
+/* Badge de estado */
+.badge-estado { padding: 0.35em 0.8em; border-radius: 20px; font-size: 0.7rem; font-weight: 700; white-space: nowrap; }
+.badge-agendada { background: #fef9c3; color: #854d0e; }
+.badge-realizada { background: #dcfce7; color: #166534; }
+.badge-cancelada { background: #fee2e2; color: #991b1b; }
+
+/* Select de estado */
+.estado-select {
+    border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 0.3rem 0.6rem;
+    font-size: 0.78rem; font-family: 'Montserrat', sans-serif; cursor: pointer;
+    background: white; transition: border-color 0.2s; max-width: 130px;
+}
+.estado-select:focus { border-color: var(--gold); outline: none; }
+.estado-form { margin: 0; }
+
+/* Botones de acción */
+.btn-action {
+    border: none; background: none; cursor: pointer; padding: 0.3rem 0.45rem;
+    border-radius: 6px; transition: all 0.15s; font-size: 0.95rem; line-height: 1;
+    pointer-events: auto !important; opacity: 1 !important;
+}
+.btn-action.edit { color: #666; }
+.btn-action.edit:hover { background: #fffbee; color: var(--gold); transform: scale(1.1); }
+.btn-action.delete { color: #999; }
+.btn-action.delete:hover { background: #fee2e2; color: #dc2626; transform: scale(1.1); }
+
+.empty-state { padding: 3rem 1rem; text-align: center; color: #ccc; }
+.empty-state i { font-size: 3rem; display: block; margin-bottom: 1rem; }
+
+/* Notificaciones emergentes */
+.flash-msg {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+    border-radius: 10px; padding: 0.85rem 1.2rem; font-size: 0.85rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15); display: flex; align-items: center; gap: 0.6rem;
+    animation: slideIn 0.3s ease;
+}
+.flash-exito { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.flash-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal personalizado */
+.modal-content { border-radius: 16px; border: none; }
+.modal-form-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 0.35rem; display: block; }
+.modal-form-control {
+    border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 0.6rem 0.9rem;
+    font-size: 0.88rem; font-family: 'Montserrat', sans-serif; width: 100%;
+    outline: none; transition: border-color 0.2s;
+}
+.modal-form-control:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,.15); }
+
+.btn-gold-modal {
+    background: var(--gold); color: white; border: none; border-radius: 8px;
+    padding: 0.65rem 1.4rem; font-weight: 700; font-family: 'Montserrat', sans-serif;
+    cursor: pointer; transition: background 0.2s;
+}
+.btn-gold-modal:hover { background: var(--dark-gold); }
+
+/* Responsive Admin */
+@media (max-width: 576px) {
+    .topbar { padding: 0.75rem 1rem; }
+    .main-content { padding: 0.85rem; }
+    .stat-num { font-size: 1.5rem; }
+    .filters-bar { flex-direction: column; }
+    .filter-input, .filter-select { width: 100%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   AGENDAR - Formulario de Citas
+   ═════════════════════════════════════════════════════════════════════ */
+
+.container-agendar {
+    max-width: 680px;
+    width: min(100%, 680px);
+    margin: 2rem auto 3rem;
+    padding: 2rem 1.5rem;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.08);
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    font-size: 0.75rem;
+}
+
+.section-subtitle {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+.categoria-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+    margin-bottom: 0.5rem;
+}
+
+.total-box {
+    background: #fffbee; border: 2px solid var(--gold); border-radius: 12px;
+    padding: 1.2rem; text-align: center;
+}
+.total-box-label { font-size: 0.85rem; color: #888; text-transform: uppercase; }
+.total-box-amount { font-size: 1.8rem; font-weight: 700; color: var(--gold); }
+
+.svc-error {
+    color: #dc2626;
+    font-size: 0.85rem;
+}
+
+.checkbox-service {
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0;
+}
+
+.checkbox-service input[type="checkbox"] {
+    cursor: pointer; width: 1rem; height: 1rem;
+    accent-color: var(--gold);
+}
+
+.checkbox-service label {
+    cursor: pointer; margin-bottom: 0;
+}

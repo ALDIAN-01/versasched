@@ -21,8 +21,9 @@ public class ClienteController {
     @Autowired private CitaRepository citaRepository;
     @Autowired private EstadoCitaRepository estadoCitaRepository;
 
-    // ── GET /cliente ──────────────────────────────────────────────────────────
-
+    /**
+     * Muestra el perfil del cliente con sus citas agendadas, realizadas o canceladas.
+     */
     @GetMapping("/cliente")
     public String cliente(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");

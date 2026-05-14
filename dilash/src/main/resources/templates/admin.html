@@ -7,139 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root { --gold:#D4AF37; --gold-dark:#B8860B; }
-        * { box-sizing:border-box; }
-        body { font-family:'Montserrat',sans-serif; background:#f4f2ee; margin:0; }
-
-        .topbar {
-            background:white; border-bottom:1px solid #eee; padding:.9rem 1.5rem;
-            display:flex; align-items:center; justify-content:space-between;
-            position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.06);
-        }
-        .brand { font-family:'Playfair Display',serif; color:var(--gold); font-size:1.4rem; letter-spacing:2px; }
-        .user-info { font-size:.85rem; color:#666; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
-        .btn-logout {
-            background:none; border:1.5px solid #ddd; border-radius:8px;
-            padding:.35rem .8rem; font-size:.8rem; color:#666; cursor:pointer;
-            font-family:'Montserrat',sans-serif; transition:all .2s; text-decoration:none;
-        }
-        .btn-logout:hover { border-color:#e74c3c; color:#e74c3c; }
-
-        .main-content { padding:1.5rem; max-width:1280px; margin:0 auto; }
-
-        .stat-card {
-            background:white; border-radius:14px; padding:1.3rem 1.5rem;
-            box-shadow:0 2px 12px rgba(0,0,0,.07); border-left:4px solid var(--gold); height:100%;
-        }
-        .stat-num { font-size:1.9rem; font-weight:700; color:var(--gold); line-height:1; }
-        .stat-label { font-size:.72rem; text-transform:uppercase; letter-spacing:1px; color:#888; margin-top:.25rem; }
-        .stat-sub { font-size:.75rem; color:#aaa; margin-top:.3rem; }
-
-        .filters-bar {
-            background:white; border-radius:14px; padding:1.1rem 1.4rem;
-            box-shadow:0 2px 12px rgba(0,0,0,.07); margin-bottom:1.5rem;
-            display:flex; flex-wrap:wrap; gap:.75rem; align-items:flex-end;
-        }
-        .filters-bar label { font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:#888; display:block; margin-bottom:.3rem; }
-        .filter-input, .filter-select {
-            border:1.5px solid #e5e5e5; border-radius:8px; padding:.45rem .85rem;
-            font-size:.85rem; font-family:'Montserrat',sans-serif; outline:none;
-            transition:border-color .2s; background:white;
-        }
-        .filter-input:focus, .filter-select:focus { border-color:var(--gold); }
-        .btn-filter {
-            background:var(--gold); color:white; border:none; border-radius:8px;
-            padding:.5rem 1.1rem; font-size:.85rem; font-weight:600;
-            font-family:'Montserrat',sans-serif; cursor:pointer; transition:background .2s; white-space:nowrap;
-        }
-        .btn-filter:hover { background:var(--gold-dark); }
-        .btn-clear {
-            background:none; border:1.5px solid #ddd; border-radius:8px;
-            padding:.5rem 1rem; font-size:.82rem; color:#888; cursor:pointer;
-            font-family:'Montserrat',sans-serif; transition:all .2s; white-space:nowrap;
-        }
-        .btn-clear:hover { border-color:#999; color:#555; }
-
-        .table-card { background:white; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.07); overflow:hidden; }
-        .table-header {
-            padding:1.1rem 1.4rem; display:flex; align-items:center;
-            justify-content:space-between; border-bottom:1px solid #f0f0f0; flex-wrap:wrap; gap:.75rem;
-        }
-        .table-header h6 { font-weight:700; font-size:.85rem; text-transform:uppercase; letter-spacing:1px; margin:0; color:#333; }
-        .table-responsive { overflow-x:auto; }
-        table.citas-table { width:100%; border-collapse:collapse; min-width:720px; }
-        .citas-table th {
-            background:#fafafa; font-size:.7rem; text-transform:uppercase;
-            letter-spacing:.8px; color:#aaa; font-weight:700;
-            padding:.8rem 1rem; border-bottom:1px solid #eee; white-space:nowrap;
-        }
-        .citas-table td { padding:.8rem 1rem; border-bottom:1px solid #f5f5f5; font-size:.87rem; vertical-align:middle; }
-        .citas-table tr:last-child td { border-bottom:none; }
-        .citas-table tbody tr:hover td { background:#fdfaf3; }
-
-        .badge-estado { padding:.35em .8em; border-radius:20px; font-size:.7rem; font-weight:700; white-space:nowrap; }
-        .badge-agendada  { background:#fef9c3; color:#854d0e; }
-        .badge-realizada { background:#dcfce7; color:#166534; }
-        .badge-cancelada { background:#fee2e2; color:#991b1b; }
-
-        .estado-select {
-            border:1.5px solid #e0e0e0; border-radius:8px; padding:.3rem .6rem;
-            font-size:.78rem; font-family:'Montserrat',sans-serif; cursor:pointer;
-            background:white; transition:border-color .2s; max-width:130px;
-        }
-        .estado-select:focus { border-color:var(--gold); outline:none; }
-
-        /* Botones de acción */
-        .btn-action {
-            border:none; background:none; cursor:pointer; padding:.3rem .45rem;
-            border-radius:6px; transition:all .15s; font-size:.95rem; line-height:1;
-            pointer-events: auto !important; opacity: 1 !important;
-        }
-        .btn-action.edit   { color:#666; }
-        .btn-action.edit:hover   { background:#fffbee; color:var(--gold); transform: scale(1.1); }
-        .btn-action.delete { color:#999; }
-        .btn-action.delete:hover { background:#fee2e2; color:#dc2626; transform: scale(1.1); }
-
-        .ingreso-stat { color:#059669; }
-
-        .empty-state { padding:3rem 1rem; text-align:center; color:#ccc; }
-        .empty-state i { font-size:3rem; display:block; margin-bottom:1rem; }
-
-        .flash-msg {
-            position:fixed; bottom:1.5rem; right:1.5rem; z-index:9999;
-            border-radius:10px; padding:.85rem 1.2rem; font-size:.85rem;
-            box-shadow:0 4px 20px rgba(0,0,0,.15); display:flex; align-items:center; gap:.6rem;
-            animation:slideIn .3s ease;
-        }
-        .flash-exito { background:#dcfce7; color:#166534; border:1px solid #bbf7d0; }
-        .flash-error { background:#fee2e2; color:#991b1b; border:1px solid #fecaca; }
-        @keyframes slideIn { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
-
-        /* Modal personalizado */
-        .modal-content { border-radius:16px; border:none; }
-        .modal-form-label { font-size:.78rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:#888; margin-bottom:.35rem; display:block; }
-        .modal-form-control {
-            border:1.5px solid #e0e0e0; border-radius:8px; padding:.6rem .9rem;
-            font-size:.88rem; font-family:'Montserrat',sans-serif; width:100%;
-            outline:none; transition:border-color .2s;
-        }
-        .modal-form-control:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.15); }
-        .btn-gold-modal {
-            background:var(--gold); color:white; border:none; border-radius:8px;
-            padding:.65rem 1.4rem; font-weight:700; font-family:'Montserrat',sans-serif;
-            cursor:pointer; transition:background .2s;
-        }
-        .btn-gold-modal:hover { background:var(--gold-dark); }
-
-        @media (max-width:576px) {
-            .topbar { padding:.75rem 1rem; }
-            .main-content { padding:.85rem; }
-            .stat-num { font-size:1.5rem; }
-            .filters-bar { flex-direction:column; }
-            .filter-input,.filter-select { width:100%; }
-        }
-    </style>
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
 
@@ -147,7 +15,7 @@
 <div class="topbar">
     <span class="brand">DILASH</span>
     <div class="user-info">
-        <i class="bi bi-person-circle" style="font-size:1.1rem;color:var(--gold);"></i>
+        <i class="bi bi-person-circle user-icon"></i>
         <span th:text="${usuario.nombre + ' ' + usuario.apellido}">Admin</span>
         <a href="/logout" class="btn-logout"><i class="bi bi-box-arrow-right me-1"></i>Salir</a>
     </div>
@@ -177,20 +45,20 @@
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="stat-card" style="border-color:#f59e0b;">
-                <div class="stat-num" id="statAgendadas" style="color:#f59e0b;">—</div>
+            <div class="stat-card stat-agendadas-border">
+                <div class="stat-num stat-agendadas-num" id="statAgendadas">—</div>
                 <div class="stat-label">Agendadas</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="stat-card" style="border-color:#22c55e;">
-                <div class="stat-num" id="statRealizadas" style="color:#22c55e;">—</div>
+            <div class="stat-card stat-realizadas-border">
+                <div class="stat-num stat-realizadas-num" id="statRealizadas">—</div>
                 <div class="stat-label">Realizadas</div>
             </div>
         </div>
         <div class="col-6 col-lg-3">
-            <div class="stat-card" style="border-color:#059669;">
-                <div class="stat-num ingreso-stat" id="statIngresos">$—</div>
+            <div class="stat-card stat-ingresos-border">
+                <div class="stat-num stat-ingresos-num" id="statIngresos">$—</div>
                 <div class="stat-label">Ingresos realizadas</div>
                 <div class="stat-sub" id="statIngresosAgendadas"></div>
             </div>
@@ -226,7 +94,7 @@
         </div>
         <div class="ms-auto">
             <label>Resultado</label>
-            <div style="font-size:.82rem;color:#666;padding:.5rem 0;">
+            <div class="contador-resultado">
                 Mostrando <strong id="contadorVisible">0</strong> citas
             </div>
         </div>
@@ -235,7 +103,7 @@
     <!-- TABLA -->
     <div class="table-card">
         <div class="table-header">
-            <h6><i class="bi bi-calendar3 me-2" style="color:var(--gold);"></i>Todas las citas</h6>
+            <h6><i class="bi bi-calendar3 me-2"></i>Todas las citas</h6>
         </div>
         <div class="table-responsive">
             <table class="citas-table">
@@ -261,17 +129,17 @@
                                 <span th:text="${c.cliente}">—</span>
                                 <!-- Mostrar detalles de cancelación debajo del cliente si estado es Cancelada -->
                                 <div th:if="${c.estado == 'Cancelada' and c['observaciones'] != null and c['observaciones'] != ''}"
-                                     style="font-size:.75rem; color:#991b1b; font-weight:400; margin-top:.25rem; line-height:1.3;">
-                                    <i class="bi bi-exclamation-circle" style="color:#dc2626;"></i>
+                                     class="cell-cancelada">
+                                    <i class="bi bi-exclamation-circle icon-cancelada"></i>
                                     <span th:text="${c['observaciones']}"></span>
                                 </div>
                             </td>
                             <td th:text="${c.fecha}">—</td>
                             <td th:text="${c.hora}">—</td>
 
-                            <!-- Estado dropdown -->
+                            <!-- Cambiar estado -->
                             <td>
-                                <form method="post" action="/admin/estado" style="margin:0;">
+                                <form method="post" action="/admin/estado" class="estado-form">
                                     <input type="hidden" name="idCita" th:value="${c.id_cita}">
                                     <select name="idEstado" class="estado-select" onchange="this.form.submit()">
                                         <option th:each="e : ${estados}"
@@ -284,8 +152,7 @@
                             </td>
 
                             <!-- Total -->
-                            <td class="fw-semibold" style="color:var(--gold);"
-                                th:text="${c.total != null ? '$' + #numbers.formatDecimal(c.total,0,'POINT',0,'NONE') : '—'}">—</td>
+                            <td class="cell-total" th:text="${c.total != null ? '$' + #numbers.formatDecimal(c.total,0,'POINT',0,'NONE') : '—'}">—</td>
 
                             <!-- Acciones: editar + eliminar -->
                             <td>
@@ -389,7 +256,7 @@
             </div>
             <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <form method="post" action="/admin/eliminar" id="formEliminar" style="margin:0;">
+                <form method="post" action="/admin/eliminar" id="formEliminar">
                     <input type="hidden" name="idCita" id="eliminarIdCita">
                     <button type="submit" class="btn btn-danger">
                         <i class="bi bi-trash3 me-1"></i>Sí, eliminar
@@ -402,38 +269,41 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Flash auto-hide
+// Auto-ocultar notificación después de 4 segundos
 const flash = document.getElementById('flashMsg');
 if (flash) setTimeout(() => { flash.style.transition='opacity .5s'; flash.style.opacity='0'; }, 4000);
 
-// Stats
+// Inicializar en carga
 document.addEventListener('DOMContentLoaded', function() {
     calcularStats();
     actualizarContador();
-    // Bloquear fechas pasadas en modal
     const hoy = new Date().toISOString().split('T')[0];
     document.getElementById('editarFecha').setAttribute('min', hoy);
 });
 
+/**
+ * Calcula estadísticas de citas: totales, agendadas, realizadas e ingresos.
+ */
 function calcularStats() {
     const rows = document.querySelectorAll('#citasBody tr');
     let ag=0, re=0, ingRe=0, ingAg=0;
     rows.forEach(r => {
         const estado = r.dataset.estado?.trim();
-        const txt    = r.querySelector('td:nth-child(6)')?.textContent?.trim()
-                        .replace(/[$.\s]/g,'') || '0';
-        const total  = parseFloat(txt) || 0;
+        const txt = r.querySelector('td:nth-child(6)')?.textContent?.trim().replace(/[$.\s]/g,'') || '0';
+        const total = parseFloat(txt) || 0;
         if (estado === 'Agendada')       { ag++;  ingAg += total; }
         else if (estado === 'Realizada') { re++;  ingRe += total; }
     });
-    document.getElementById('statAgendadas').textContent  = ag;
+    document.getElementById('statAgendadas').textContent = ag;
     document.getElementById('statRealizadas').textContent = re;
-    document.getElementById('statIngresos').textContent   = '$' + ingRe.toLocaleString('es-CO');
+    document.getElementById('statIngresos').textContent = '$' + ingRe.toLocaleString('es-CO');
     document.getElementById('statIngresosAgendadas').textContent =
         ingAg > 0 ? 'Esperados: $' + ingAg.toLocaleString('es-CO') : '';
 }
 
-// Filtros
+/**
+ * Aplica filtros: cliente, fechas y estado.
+ */
 function aplicarFiltros() {
     const qC = document.getElementById('filtroCliente').value.toLowerCase();
     const qD = document.getElementById('filtroDesde').value;
@@ -448,30 +318,41 @@ function aplicarFiltros() {
     });
     actualizarContador();
 }
+
+/**
+ * Limpia todos los filtros y muestra todas las citas.
+ */
 function limpiarFiltros() {
     ['filtroCliente','filtroDesde','filtroHasta'].forEach(id => document.getElementById(id).value='');
     document.getElementById('filtroEstado').value='';
     aplicarFiltros();
 }
+
+/**
+ * Actualiza el contador de citas visibles.
+ */
 function actualizarContador() {
     const v = document.querySelectorAll('#citasBody tr:not([style*="display: none"])').length;
     document.getElementById('contadorVisible').textContent = v;
 }
 
-// Modal editar
-const modalEditar   = new bootstrap.Modal(document.getElementById('modalEditar'));
+// Instancias de Bootstrap Modal
+const modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
 const modalEliminar = new bootstrap.Modal(document.getElementById('modalEliminar'));
 
+/**
+ * Abre el modal de reagendar con datos de la cita.
+ */
 function abrirEditar(btn) {
-    document.getElementById('editarIdCita').value  = btn.dataset.id;
+    document.getElementById('editarIdCita').value = btn.dataset.id;
     document.getElementById('editarCliente').textContent = btn.dataset.cliente;
-    document.getElementById('editarFecha').value   = btn.dataset.fecha;   // YYYY-MM-DD
-    document.getElementById('editarObs').value     = btn.dataset.observaciones || '';
-    // Pre-seleccionar hora actual en el select
+    document.getElementById('editarFecha').value = btn.dataset.fecha;
+    document.getElementById('editarObs').value = btn.dataset.observaciones || '';
+    
+    // Pre-selecciona la hora actual
     const hora = btn.dataset.hora;
-    const sel  = document.getElementById('editarHorario');
+    const sel = document.getElementById('editarHorario');
     for (let i = 0; i < sel.options.length; i++) {
-        // La hora del SP viene como "HH:mm:ss", el texto del option también
         if (sel.options[i].text.startsWith(hora?.substring(0,5) || '__')) {
             sel.selectedIndex = i; break;
         }
@@ -479,6 +360,9 @@ function abrirEditar(btn) {
     modalEditar.show();
 }
 
+/**
+ * Abre el modal de confirmación para eliminar cita.
+ */
 function confirmarEliminar(btn) {
     document.getElementById('eliminarIdCita').value = btn.dataset.id;
     document.getElementById('modalClienteNombre').textContent = btn.dataset.cliente;

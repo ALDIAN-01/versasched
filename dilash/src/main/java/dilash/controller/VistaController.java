@@ -27,8 +27,9 @@ public class VistaController {
     @Autowired private EstadoCitaRepository estadoCitaRepository;
     @Autowired private HorarioRepository horarioRepository;
 
-    // ── GET /admin ────────────────────────────────────────────────────────────
-
+    /**
+     * Panel de administración: carga todas las citas con estadísticas de ingresos.
+     */
     @GetMapping("/admin")
     public String admin(HttpSession session, Model model) {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
@@ -71,19 +72,23 @@ public class VistaController {
         return "admin";
     }
 
+    /**
+     * Obtiene los horarios ocupados de una fecha específica (para verificar disponibilidad).
+     */
     @GetMapping("/api/citas/horarios-ocupados")
-    @ResponseBody // Esto hace que devuelva JSON y no una página HTML
+    @ResponseBody
     public List<Long> obtenerHorariosOcupados(@RequestParam String fecha) {
         try {
             LocalDate date = LocalDate.parse(fecha);
             return citaRepository.findHorariosOcupados(date);
         } catch (Exception e) {
-            return List.of(); // Devuelve lista vacía si hay error
+            return List.of();
         }
     }
 
-    // ── POST /admin/estado ────────────────────────────────────────────────────
-
+    /**
+     * Cambia el estado de una cita (Agendada, Realizada, Cancelada).
+     */
     @PostMapping("/admin/estado")
     public String cambiarEstado(@RequestParam Integer idCita,
                                 @RequestParam Integer idEstado,
@@ -103,10 +108,10 @@ public class VistaController {
         return "redirect:/admin";
     }
 
-    // ── POST /admin/reagendar ─────────────────────────────────────────────────
-    // Cambia fecha, horario y observaciones de una cita existente.
-    // El estado vuelve a "Agendada" (id=1) automáticamente al reagendar.
-
+    /**
+     * Reagenda una cita con nueva fecha, hora y observaciones.
+     * Automáticamente vuelve al estado "Agendada" al reagendar.
+     */
     @PostMapping("/admin/reagendar")
     public String reagendar(@RequestParam Integer idCita,
                             @RequestParam String fecha,
@@ -124,14 +129,13 @@ public class VistaController {
 
         LocalDate nuevaFecha = LocalDate.parse(fecha);
 
-        // Verificar que el nuevo horario no esté ocupado por OTRA cita
+        // Verificar disponibilidad del nuevo horario
         List<Long> ocupados = citaRepository.findHorariosOcupados(nuevaFecha);
-        // Excluir el horario actual de esta misma cita (si la fecha no cambia)
+        // Excluir el horario actual de esta misma cita
         Long horarioActual = cita.getHorario() != null ? cita.getHorario().getIdHorario() : -1L;
         boolean mismoDia   = nuevaFecha.equals(cita.getFecha());
         boolean ocupado    = ocupados.stream()
-                .anyMatch(id -> id.equals(idHorario)
-                        && !(mismoDia && id.equals(horarioActual)));
+                .anyMatch(id -> id.equals(idHorario) && !(mismoDia && id.equals(horarioActual)));
 
         if (ocupado) {
             ra.addFlashAttribute("error", "Ese horario ya está ocupado para esa fecha. Elige otro.");
@@ -144,7 +148,7 @@ public class VistaController {
             return "redirect:/admin";
         }
 
-        // Volver a estado "Agendada" (id=1) al reagendar
+        // Volver a estado "Agendada" cuando se reagenda
         EstadoCita agendada = estadoCitaRepository.findById(1).orElse(cita.getEstado());
 
         cita.setFecha(nuevaFecha);
@@ -158,8 +162,9 @@ public class VistaController {
         return "redirect:/admin";
     }
 
-    // ── POST /admin/eliminar ──────────────────────────────────────────────────
-
+    /**
+     * Elimina una cita y todos sus detalles de servicios.
+     */
     @PostMapping("/admin/eliminar")
     public String eliminarCita(@RequestParam Integer idCita,
                                HttpSession session,
@@ -175,8 +180,9 @@ public class VistaController {
         return "redirect:/admin";
     }
 
-    // ── Helper ────────────────────────────────────────────────────────────────
-
+    /**
+     * Verifica si el usuario logueado es admin.
+     */
     private boolean esAdmin(HttpSession session) {
         Usuario u = (Usuario) session.getAttribute("usuarioLogueado");
         return u != null && "ADMIN".equals(u.getTipoUsuario());

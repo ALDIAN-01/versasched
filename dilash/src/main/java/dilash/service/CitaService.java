@@ -16,29 +16,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Servicio de Citas — orquesta los Stored Procedures definidos en dilash-clean.sql
+ * CitaService
  *
- * PROCEDIMIENTOS USADOS:
- *  - sp_crear_cita           → crea la cabecera de la cita (estado=Agendada automáticamente)
- *  - sp_agregar_servicio_cita → inserta en detalle_cita (el trigger actualiza total)
- *  - sp_consultar_todas_las_citas → vista del panel Admin
+ * Orquesta los Stored Procedures de SQL Server para crear, consultar y gestionar citas.
+ * Procedimientos usados:
+ *  - sp_crear_cita: crea la cita en estado "Agendada"
+ *  - sp_agregar_servicio_cita: añade servicios a la cita (trigger actualiza total)
+ *  - sp_consultar_todas_las_citas: consulta el panel admin
  */
 @Service
 public class CitaService {
 
-    @Autowired
-    private JdbcTemplate jdbc;
-
-    @Autowired
-    private CitaRepository citaRepository;
-
-    @Autowired
-    private HorarioRepository horarioRepository;
-
-    // ── Horarios disponibles ───────────────────────────────────────────────────
+    @Autowired private JdbcTemplate jdbc;
+    @Autowired private CitaRepository citaRepository;
+    @Autowired private HorarioRepository horarioRepository;
 
     /**
-     * Retorna los objetos Horario que aún NO están ocupados en la fecha indicada.
+     * Obtiene horarios disponibles para una fecha específica.
      */
     public List<Horario> getHorariosDisponibles(LocalDate fecha) {
         List<Long> ocupados = citaRepository.findHorariosOcupados(fecha);
@@ -48,19 +42,9 @@ public class CitaService {
                 .collect(Collectors.toList());
     }
 
-    // ── Creación de cita via SP ────────────────────────────────────────────────
-
     /**
-     * Llama a sp_crear_cita y retorna el id_cita generado.
-     *
-     * @param idUsuario          FK del usuario logueado
-     * @param fecha              Fecha de la cita
-     * @param idHorario          FK del horario seleccionado
-     * @param direccionServicio  Dirección (null si es en Local)
-     * @param lugar              "Local" | "Mi direccion"
-     * @param observaciones      Texto libre (nullable)
-     * @return id de la cita recién creada
-     * @throws RuntimeException si el horario ya está ocupado (el SP lanza RAISERROR)
+     * Crea una nueva cita ejecutando el SP sp_crear_cita.
+     * Retorna el ID de la cita creada.
      */
     @Transactional
     public Long crearCita(Long idUsuario, LocalDate fecha, Long idHorario,
@@ -77,16 +61,13 @@ public class CitaService {
                 lugar,
                 observaciones);
 
-        // El SP retorna: SELECT SCOPE_IDENTITY() AS id_cita_creada
         Number idCita = (Number) row.get("id_cita_creada");
         return idCita.longValue();
     }
 
-    // ── Agregar servicio a cita via SP ─────────────────────────────────────────
-
     /**
-     * Llama a sp_agregar_servicio_cita para insertar un servicio en detalle_cita.
-     * El trigger TR_ActualizarTotalCita recalcula automáticamente el total de la cita.
+     * Añade un servicio a una cita ejecutando sp_agregar_servicio_cita.
+     * El trigger de base de datos actualiza automáticamente el total.
      */
     @Transactional
     public void agregarServicio(Long idCita, Long idServicio) {
@@ -95,15 +76,18 @@ public class CitaService {
                 idCita, idServicio));
     }
 
-    // ── Panel Admin: todas las citas via SP ────────────────────────────────────
-
     /**
-     * Llama a sp_consultar_todas_las_citas.
-     * Retorna lista de mapas con: id_cita, cliente, fecha, hora, estado, total.
+     * Obtiene todas las citas para el panel de administración.
+     * Retorna: [id_cita, cliente, fecha, hora, estado, total, observaciones]
      */
     public List<Map<String, Object>> consultarTodasLasCitas() {
         return normalizeKeys(jdbc.queryForList("EXEC sp_consultar_todas_las_citas"));
     }
+
+    /**
+     * Normaliza las claves del mapa de resultados a minúsculas
+     * (normaliza resultados de SQL Server).
+     */
 
     private List<Map<String, Object>> normalizeKeys(List<Map<String, Object>> rows) {
         List<Map<String, Object>> result = new ArrayList<>();
