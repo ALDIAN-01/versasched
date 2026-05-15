@@ -1,8 +1,8 @@
-# Dilash - Sistema de Agendamiento de Citas
+# VersaShed - Sistema de Agendamiento de Citas
 
 ## Descripción del Proyecto
 
-Dilash es un sistema web de gestión de citas diseñado para un negocio de belleza en el hogar. Permite la autenticación de usuarios, el agendamiento de citas basado en la disponibilidad de horarios, y la gestión del historial de clientes. La aplicación está construida siguiendo el patrón arquitectónico MVC (Modelo-Vista-Controlador), utilizando tecnologías modernas como Spring Boot para el backend, Thymeleaf para las vistas, y Bootstrap para el diseño responsivo. La base de datos utilizada es Microsoft SQL Server.
+VersaShed es un sistema web de gestión de citas diseñado para un negocio de belleza en el a domicilio. Permite la autenticación de usuarios, el agendamiento de citas basado en la disponibilidad de horarios, y la gestión del historial de clientes. La aplicación está construida siguiendo el patrón arquitectónico MVC (Modelo-Vista-Controlador), utilizando tecnologías modernas como Spring Boot para el backend, Thymeleaf para las vistas, y Bootstrap para el diseño responsivo. La base de datos utilizada es Microsoft SQL Server.
 
 El sistema soporta dos tipos de usuarios principales:
 - **Clientes**: Pueden registrarse, iniciar sesión, agendar citas, ver su historial y gestionar su perfil.
@@ -76,6 +76,12 @@ dilash/
 │   │       │   │   └── style.css
 │   │       │   ├── img/
 │   │       │   └── js/
+│   │       │       ├── common.js                    # Scripts comunes compartidos
+│   │       │       ├── login.js                     # Scripts de login
+│   │       │       ├── registro.js                  # Scripts de registro
+│   │       │       ├── perfil.js                    # Scripts de gestión de perfil
+│   │       │       ├── agendar.js                   # Scripts de agendamiento
+│   │       │       ├── admin.js                     # Scripts del panel de administrador
 │   │       │       └── script.js
 │   │       └── templates/                          # Plantillas Thymeleaf
 │   │           ├── index.html                      # Página principal
@@ -144,7 +150,6 @@ Se utilizan procedimientos almacenados y triggers para operaciones complejas, ac
 - **Hashing de contraseñas (bcrypt):** Ahora las contraseñas de los usuarios se guardan usando `BCrypt` (vía `spring-security-crypto`). Las clases modificadas incluyen `UsuarioService` y `PerfilService`, y se añadió `SecurityConfig` con un `PasswordEncoder`.
 - **Compatibilidad retroactiva:** Si existen usuarios con contraseñas en texto plano, al iniciar sesión por primera vez su contraseña se convertirá automáticamente a hash seguro.
 - **Términos y condiciones:** Se añadió una checkbox obligatoria en `registro.html` y una nueva vista pública `/terminos` con el texto de términos y condiciones; el backend valida que el usuario acepte antes de crear la cuenta.
-- **Limpieza de frontend:** Se separaron scripts en archivos externos (`/js/common.js`, `/js/registro.js`, `/js/login.js`, `/js/perfil.js`, `/js/agendar.js`, `/js/admin.js`) y se corrigieron estilos duplicados de autentificación con el nuevo scope `.auth-page`.
 
 
 ## Info
