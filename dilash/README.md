@@ -139,6 +139,13 @@ La aplicación utiliza Microsoft SQL Server. La conexión se configura en `appli
 
 Se utilizan procedimientos almacenados y triggers para operaciones complejas, accedidos vía JDBC.
 
+## Cambios recientes
+
+- **Hashing de contraseñas (bcrypt):** Ahora las contraseñas de los usuarios se guardan usando `BCrypt` (vía `spring-security-crypto`). Las clases modificadas incluyen `UsuarioService` y `PerfilService`, y se añadió `SecurityConfig` con un `PasswordEncoder`.
+- **Compatibilidad retroactiva:** Si existen usuarios con contraseñas en texto plano, al iniciar sesión por primera vez su contraseña se convertirá automáticamente a hash seguro.
+- **Términos y condiciones:** Se añadió una checkbox obligatoria en `registro.html` y una nueva vista pública `/terminos` con el texto de términos y condiciones; el backend valida que el usuario acepte antes de crear la cuenta.
+
+
 ## Info
 
 Este proyecto fue desarrollado como parte de mi curso de Desarrollo Web en mi quinto semestre estudiando Ingeniería de Software en el Tecnológico de Antioquia.

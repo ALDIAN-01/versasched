@@ -19,6 +19,11 @@ public class RegistroController {
         return "registro";
     }
 
+    @GetMapping("/terminos")
+    public String mostrarTerminos() {
+        return "terminos";
+    }
+
     @PostMapping("/registro")
     public String procesarRegistro(@RequestParam String nombre,
                                     @RequestParam String apellido,
@@ -26,9 +31,14 @@ public class RegistroController {
                                     @RequestParam String telefono,
                                     @RequestParam String contrasena,
                                     @RequestParam String tipoUsuario,
+                                    @RequestParam(required = false) String terminos,
                                     Model model) {
 
         try {
+            if (terminos == null) {
+                model.addAttribute("error", "Debes aceptar los términos y condiciones.");
+                return "registro";
+            }
             usuarioService.registrarUsuario(nombre, apellido, correo, telefono, contrasena, tipoUsuario);
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());

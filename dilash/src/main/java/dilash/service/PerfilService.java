@@ -3,6 +3,7 @@ package dilash.service;
 import dilash.model.Usuario;
 import dilash.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,6 +11,9 @@ public class PerfilService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Usuario obtenerPerfil(Long idUsuario) {
         return usuarioRepository.findById(idUsuario)
@@ -41,11 +45,15 @@ public class PerfilService {
 
         Usuario usuario = obtenerPerfil(idUsuario);
 
-        if (!usuario.getContrasena().equals(contrasenaActual)) {
+        String actualGuardada = usuario.getContrasena();
+        boolean actualCoincide = actualGuardada != null &&
+                (passwordEncoder.matches(contrasenaActual, actualGuardada) || actualGuardada.equals(contrasenaActual));
+
+        if (!actualCoincide) {
             throw new IllegalArgumentException("La contraseña actual no es correcta.");
         }
 
-        usuario.setContrasena(contrasenaNueva);
+        usuario.setContrasena(passwordEncoder.encode(contrasenaNueva));
         usuarioRepository.save(usuario);
     }
 }
