@@ -3,6 +3,7 @@
 <head th:replace="~{fragments :: head-links}">
     <meta charset="UTF-8">
     <title>Mi cuenta | Dilash</title>
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
 <nav th:replace="~{fragments :: navbar}"></nav>
@@ -79,12 +80,12 @@
                         <i class="bi bi-geo-alt me-1"></i>
                         <span th:text="${cita.lugar}"></span>
                         <span th:if="${cita.direccionServicio != null and cita.direccionServicio != 'Local Dilash'}"
-                              th:text="' — ' + ${cita.direccionServicio}"></span>
+                            th:text="' — ' + ${cita.direccionServicio}"></span>
                     </p>
 
                     <!-- Observaciones -->
                     <p class="mb-1 small text-muted"
-                       th:if="${cita.observaciones != null and !cita.observaciones.isBlank()}">
+                    th:if="${cita.observaciones != null and !cita.observaciones.isBlank()}">
                         <i class="bi bi-chat-left-text me-1"></i>
                         <span th:text="${cita.observaciones}"></span>
                     </p>
@@ -109,9 +110,9 @@
 
                     <!-- Badge estado -->
                     <span class="badge"
-                          th:text="${cita.estado.nombre}"
-                          th:classappend="${cita.estado.nombre == 'Agendada'}   ? 'bg-warning text-dark' :
-                                          (${cita.estado.nombre == 'Realizada'} ? 'bg-success'           : 'bg-danger')">
+                        th:text="${cita.estado.nombre}"
+                        th:classappend="${cita.estado.nombre == 'Agendada'}   ? 'bg-warning text-dark' :
+                                        (${cita.estado.nombre == 'Realizada'} ? 'bg-success'           : 'bg-danger')">
                     </span>
 
                 </div>

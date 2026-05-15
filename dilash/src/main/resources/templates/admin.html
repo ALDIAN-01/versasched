@@ -69,19 +69,19 @@
     <div class="filters-bar">
         <div>
             <label>Buscar cliente</label>
-            <input type="text" class="filter-input" id="filtroCliente" placeholder="Nombre…" oninput="aplicarFiltros()">
+            <input type="text" class="filter-input" id="filtroCliente" placeholder="Nombre…">
         </div>
         <div>
             <label>Desde</label>
-            <input type="date" class="filter-input" id="filtroDesde" onchange="aplicarFiltros()">
+            <input type="date" class="filter-input" id="filtroDesde">
         </div>
         <div>
             <label>Hasta</label>
-            <input type="date" class="filter-input" id="filtroHasta" onchange="aplicarFiltros()">
+            <input type="date" class="filter-input" id="filtroHasta">
         </div>
         <div>
             <label>Estado</label>
-            <select class="filter-select" id="filtroEstado" onchange="aplicarFiltros()">
+            <select class="filter-select" id="filtroEstado">
                 <option value="">Todos</option>
                 <option value="Agendada">Agendada</option>
                 <option value="Realizada">Realizada</option>
@@ -89,8 +89,8 @@
             </select>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn-filter" onclick="aplicarFiltros()"><i class="bi bi-funnel me-1"></i>Filtrar</button>
-            <button class="btn-clear" onclick="limpiarFiltros()"><i class="bi bi-x me-1"></i>Limpiar</button>
+            <button class="btn-filter"><i class="bi bi-funnel me-1"></i>Filtrar</button>
+            <button class="btn-clear"><i class="bi bi-x me-1"></i>Limpiar</button>
         </div>
         <div class="ms-auto">
             <label>Resultado</label>
@@ -129,7 +129,7 @@
                                 <span th:text="${c.cliente}">—</span>
                                 <!-- Mostrar detalles de cancelación debajo del cliente si estado es Cancelada -->
                                 <div th:if="${c.estado == 'Cancelada' and c['observaciones'] != null and c['observaciones'] != ''}"
-                                     class="cell-cancelada">
+                                    class="cell-cancelada">
                                     <i class="bi bi-exclamation-circle icon-cancelada"></i>
                                     <span th:text="${c['observaciones']}"></span>
                                 </div>
@@ -141,7 +141,7 @@
                             <td>
                                 <form method="post" action="/admin/estado" class="estado-form">
                                     <input type="hidden" name="idCita" th:value="${c.id_cita}">
-                                    <select name="idEstado" class="estado-select" onchange="this.form.submit()">
+                                    <select name="idEstado" class="estado-select">
                                         <option th:each="e : ${estados}"
                                                 th:value="${e.idEstado}"
                                                 th:text="${e.nombre}"
@@ -164,16 +164,14 @@
                                             th:data-cliente="${c.cliente}"
                                             th:data-fecha="${c.fecha}"
                                             th:data-hora="${c.hora}"
-                                            th:data-observaciones="${c['observaciones'] != null ? c['observaciones'] : ''}"
-                                            onclick="abrirEditar(this)">
+                                            th:data-observaciones="${c['observaciones'] != null ? c['observaciones'] : ''}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <!-- Eliminar -->
                                     <button class="btn-action delete"
                                             title="Eliminar cita"
                                             th:data-id="${c.id_cita}"
-                                            th:data-cliente="${c.cliente}"
-                                            onclick="confirmarEliminar(this)">
+                                            th:data-cliente="${c.cliente}">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </div>
@@ -224,7 +222,7 @@
                         <div class="col-12">
                             <label class="modal-form-label">Observaciones</label>
                             <textarea name="observaciones" id="editarObs" class="modal-form-control"
-                                      rows="2" placeholder="Notas adicionales…"></textarea>
+                                    rows="2" placeholder="Notas adicionales…"></textarea>
                         </div>
                     </div>
 
@@ -268,106 +266,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// Auto-ocultar notificación después de 4 segundos
-const flash = document.getElementById('flashMsg');
-if (flash) setTimeout(() => { flash.style.transition='opacity .5s'; flash.style.opacity='0'; }, 4000);
-
-// Inicializar en carga
-document.addEventListener('DOMContentLoaded', function() {
-    calcularStats();
-    actualizarContador();
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById('editarFecha').setAttribute('min', hoy);
-});
-
-/**
- * Calcula estadísticas de citas: totales, agendadas, realizadas e ingresos.
- */
-function calcularStats() {
-    const rows = document.querySelectorAll('#citasBody tr');
-    let ag=0, re=0, ingRe=0, ingAg=0;
-    rows.forEach(r => {
-        const estado = r.dataset.estado?.trim();
-        const txt = r.querySelector('td:nth-child(6)')?.textContent?.trim().replace(/[$.\s]/g,'') || '0';
-        const total = parseFloat(txt) || 0;
-        if (estado === 'Agendada')       { ag++;  ingAg += total; }
-        else if (estado === 'Realizada') { re++;  ingRe += total; }
-    });
-    document.getElementById('statAgendadas').textContent = ag;
-    document.getElementById('statRealizadas').textContent = re;
-    document.getElementById('statIngresos').textContent = '$' + ingRe.toLocaleString('es-CO');
-    document.getElementById('statIngresosAgendadas').textContent =
-        ingAg > 0 ? 'Esperados: $' + ingAg.toLocaleString('es-CO') : '';
-}
-
-/**
- * Aplica filtros: cliente, fechas y estado.
- */
-function aplicarFiltros() {
-    const qC = document.getElementById('filtroCliente').value.toLowerCase();
-    const qD = document.getElementById('filtroDesde').value;
-    const qH = document.getElementById('filtroHasta').value;
-    const qE = document.getElementById('filtroEstado').value;
-    document.querySelectorAll('#citasBody tr').forEach(r => {
-        const ok = (!qC || r.dataset.cliente?.toLowerCase().includes(qC))
-                && (!qD || r.dataset.fecha >= qD)
-                && (!qH || r.dataset.fecha <= qH)
-                && (!qE || r.dataset.estado === qE);
-        r.style.display = ok ? '' : 'none';
-    });
-    actualizarContador();
-}
-
-/**
- * Limpia todos los filtros y muestra todas las citas.
- */
-function limpiarFiltros() {
-    ['filtroCliente','filtroDesde','filtroHasta'].forEach(id => document.getElementById(id).value='');
-    document.getElementById('filtroEstado').value='';
-    aplicarFiltros();
-}
-
-/**
- * Actualiza el contador de citas visibles.
- */
-function actualizarContador() {
-    const v = document.querySelectorAll('#citasBody tr:not([style*="display: none"])').length;
-    document.getElementById('contadorVisible').textContent = v;
-}
-
-// Instancias de Bootstrap Modal
-const modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
-const modalEliminar = new bootstrap.Modal(document.getElementById('modalEliminar'));
-
-/**
- * Abre el modal de reagendar con datos de la cita.
- */
-function abrirEditar(btn) {
-    document.getElementById('editarIdCita').value = btn.dataset.id;
-    document.getElementById('editarCliente').textContent = btn.dataset.cliente;
-    document.getElementById('editarFecha').value = btn.dataset.fecha;
-    document.getElementById('editarObs').value = btn.dataset.observaciones || '';
-    
-    // Pre-selecciona la hora actual
-    const hora = btn.dataset.hora;
-    const sel = document.getElementById('editarHorario');
-    for (let i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].text.startsWith(hora?.substring(0,5) || '__')) {
-            sel.selectedIndex = i; break;
-        }
-    }
-    modalEditar.show();
-}
-
-/**
- * Abre el modal de confirmación para eliminar cita.
- */
-function confirmarEliminar(btn) {
-    document.getElementById('eliminarIdCita').value = btn.dataset.id;
-    document.getElementById('modalClienteNombre').textContent = btn.dataset.cliente;
-    modalEliminar.show();
-}
-</script>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/admin.js}"></script>
 </body>
 </html>

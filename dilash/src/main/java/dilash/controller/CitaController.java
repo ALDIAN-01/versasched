@@ -21,7 +21,7 @@ public class CitaController {
     private CitaService citaService;
 
     /**
-     * Obtiene todas las citas para el panel de administración (consumo vía JavaScript si es necesario).
+     * Obtiene todas las citas para el panel de administración.
      * Retorna JSON con: id_cita, cliente, fecha, hora, estado, total.
      */
     @GetMapping("/todas")

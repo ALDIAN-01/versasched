@@ -34,7 +34,7 @@ public class LoginController {
 
             session.setAttribute("usuarioLogueado", usuario);
 
-            // 🔥 REDIRECCIÓN INTELIGENTE
+            // Redirección
             String redirectUrl = usuarioService.determinarRedireccionPostLogin(usuario, redirect);
             return "redirect:" + redirectUrl;
 

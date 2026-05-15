@@ -67,10 +67,10 @@ public class CitaService {
      */
     @Transactional
     public Long crearCita(Long idUsuario, LocalDate fecha, Long idHorario,
-                          String direccionServicio, String lugar, String observaciones) {
+                        String direccionServicio, String lugar, String observaciones) {
 
         String sql = "EXEC sp_crear_cita @id_usuario=?, @fecha=?, @id_horario=?, " +
-                     "@direccion_servicio=?, @lugar=?, @observaciones=?";
+                    "@direccion_servicio=?, @lugar=?, @observaciones=?";
 
         Map<String, Object> row = jdbc.queryForMap(sql,
                 idUsuario,
@@ -201,12 +201,12 @@ public class CitaService {
      */
     @Transactional
     public Long reservarCita(Long idUsuario,
-                             String fecha,
-                             Long idHorario,
-                             String lugar,
-                             String direccion,
-                             String observaciones,
-                             List<Long> servicios) {
+                            String fecha,
+                            Long idHorario,
+                            String lugar,
+                            String direccion,
+                            String observaciones,
+                            List<Long> servicios) {
         LocalDate fechaParsed = LocalDate.parse(fecha);
         String direccionFinal = determinarDireccionServicio(lugar, direccion);
 

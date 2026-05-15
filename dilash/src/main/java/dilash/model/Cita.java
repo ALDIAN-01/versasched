@@ -5,18 +5,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Entidad Cita — alineada con dilash-clean.sql
- *
- * CAMBIOS VS. VERSIÓN ANTERIOR:
- *  - Eliminados: nombreCliente, telefonoCliente, apellidoCliente, correoCliente
- *    (el cliente ya vive en la tabla `usuario`; no hay columnas duplicadas en `cita`).
- *  - Eliminado: campo `hora` (LocalTime). La hora ahora es FK → tabla `horario`.
- *  - Añadida relación @ManyToOne con Horario (id_horario).
- *  - `total` es insertable=false / updatable=false porque lo gestiona el trigger
- *    TR_ActualizarTotalCita; la app NO debe escribir ese campo.
- *  - tipo de `total` cambiado a BigDecimal para coincidir con DECIMAL(18,2) del SQL.
- */
 @Entity
 @Table(name = "cita")
 public class Cita {
@@ -52,14 +40,14 @@ public class Cita {
 
     private String observaciones;
 
-    /** Gestionado exclusivamente por el trigger TR_ActualizarTotalCita */
+    // Gestionado exclusivamente por el trigger TR_ActualizarTotalCita
     @Column(insertable = false, updatable = false)
     private BigDecimal total;
 
     @OneToMany(mappedBy = "cita", fetch = FetchType.EAGER)
     private List<DetalleCita> detalles;
 
-    // ── Getters / Setters ─────────────────────────────────────────────────────
+    // getters y setters ─────────────────────────────────────────────────────
 
     public Integer getIdCita() { return idCita; }
     public void setIdCita(Integer idCita) { this.idCita = idCita; }
@@ -86,7 +74,7 @@ public class Cita {
     public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 
     public BigDecimal getTotal() { return total; }
-    // No hay setter de total — el trigger es el único que lo actualiza.
+    // No hay setter de total porque el trigger es el único que lo actualiza.
 
     public List<DetalleCita> getDetalles() { return detalles; }
     public void setDetalles(List<DetalleCita> detalles) { this.detalles = detalles; }

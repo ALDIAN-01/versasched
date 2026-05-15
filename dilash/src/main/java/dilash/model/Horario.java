@@ -18,6 +18,7 @@ public class Horario {
 
     private LocalTime hora;
 
+    // getters y setters
     public Long getIdHorario() {
         return idHorario;
     }

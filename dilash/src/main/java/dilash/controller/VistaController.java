@@ -105,8 +105,8 @@ public class VistaController {
      */
     @PostMapping("/admin/eliminar")
     public String eliminarCita(@RequestParam Integer idCita,
-                               HttpSession session,
-                               RedirectAttributes ra) {
+                            HttpSession session,
+                            RedirectAttributes ra) {
         if (!esAdmin(session)) return "redirect:/login";
         try {
             adminService.eliminarCita(idCita);
