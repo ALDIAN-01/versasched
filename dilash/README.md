@@ -2,7 +2,7 @@
 
 ## Descripción del Proyecto
 
-VersaShed es un sistema web de gestión de citas diseñado para un negocio de belleza en el a domicilio. Permite la autenticación de usuarios, el agendamiento de citas basado en la disponibilidad de horarios, y la gestión del historial de clientes. La aplicación está construida siguiendo el patrón arquitectónico MVC (Modelo-Vista-Controlador), utilizando tecnologías modernas como Spring Boot para el backend, Thymeleaf para las vistas, y Bootstrap para el diseño responsivo. La base de datos utilizada es Microsoft SQL Server.
+VersaShed es un sistema web de gestión de citas diseñado para un negocio de belleza a domicilio. Permite la autenticación de usuarios, el agendamiento de citas basado en la disponibilidad de horarios, y la gestión del historial de clientes. La aplicación está construida siguiendo el patrón arquitectónico MVC (Modelo-Vista-Controlador), utilizando tecnologías modernas como Spring Boot para el backend, Thymeleaf para las vistas, y Bootstrap para el diseño responsivo. La base de datos utilizada es Microsoft SQL Server.
 
 El sistema soporta dos tipos de usuarios principales:
 - **Clientes**: Pueden registrarse, iniciar sesión, agendar citas, ver su historial y gestionar su perfil.
@@ -91,7 +91,6 @@ dilash/
 │   │           ├── cliente.html                    # Panel de cliente
 │   │           ├── admin.html                      # Panel de administrador
 │   │           ├── perfil.html                     # Gestión de perfil
-│   │           ├── faq-section.html                # Sección de preguntas frecuentes
 │   │           └── fragments.html                  # Fragmentos reutilizables
 │   └── test/
 │       └── java/
