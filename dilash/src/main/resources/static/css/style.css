@@ -191,6 +191,7 @@ i:hover { transform: scale(1.2); }
     background-color: var(--gold); color: var(--white); border: none;
     padding: 12px 35px; text-transform: uppercase; font-weight: 600;
     transition: 0.3s; text-decoration: none;
+    display: block; margin: 0 auto;
 }
 .btn-gold:hover { background-color: var(--dark-gold); color: white; transform: scale(1.05); }
 
