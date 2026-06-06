@@ -1,12 +1,30 @@
-# VersaShed - Sistema de Agendamiento de Citas
+VersaShed — Plataforma escalable de agendamiento y operaciones
 
-## Descripción del Proyecto
+## Descripción
 
-VersaShed es un sistema web de gestión de citas diseñado para un negocio de belleza a domicilio. Permite la autenticación de usuarios, el agendamiento de citas basado en la disponibilidad de horarios, y la gestión del historial de clientes. La aplicación está construida siguiendo el patrón arquitectónico MVC (Modelo-Vista-Controlador), utilizando tecnologías modernas como Spring Boot para el backend, Thymeleaf para las vistas, y Bootstrap para el diseño responsivo. La base de datos utilizada es Microsoft SQL Server.
+VersaShed es una plataforma modular y escalable para gestionar citas y servicios, pensada para adaptarse a distintos tipos de negocios (salud, belleza, talleres, consultorías, educación, entre otros). Su objetivo es facilitar tanto la experiencia del cliente como la operación interna, ofreciendo un punto de partida sólido para proyectos que necesitan crecer y adaptarse.
 
-El sistema soporta dos tipos de usuarios principales:
-- **Clientes**: Pueden registrarse, iniciar sesión, agendar citas, ver su historial y gestionar su perfil.
-- **Administradores**: Gestionan los servicios, horarios, citas, y tienen acceso a paneles de administración para supervisar y modificar el estado de las citas.
+En este repositorio encontrarás una implementación funcional usada como piloto en un negocio real (Dilash); sirve como ejemplo práctico y base para personalizar la plataforma según las necesidades.
+
+VersaShed ofrece, entre otras cosas:
+- Gestión centralizada de servicios y categorías
+- Control de disponibilidad por horarios y recursos
+- Flujos de usuario con roles y paneles administrativos
+- Registro de historial de citas y trazabilidad de operaciones
+
+La aplicación utiliza un patrón MVC claro y tecnologías estándar (Spring Boot, Thymeleaf y Bootstrap). La capa de persistencia está basada en JPA y puede adaptarse fácilmente a distintos motores SQL; la implementación de ejemplo emplea Microsoft SQL Server.
+
+## ¿Por qué elegir VersaShed?
+
+- Arquitectura pensada para escalar a múltiples servicios y despliegues.
+- Estructura modular que facilita la personalización y extensión.
+- Buenas prácticas de seguridad y manejo de usuarios incluidas (por ejemplo, hashing de contraseñas con BCrypt).
+- Código probado en una instalación real, listo para ser tomado como referencia o base de producción.
+
+## Roles por defecto
+
+- **Clientes:** registro, inicio de sesión, agendamiento, historial y gestión de perfil.
+- **Administradores:** gestión de servicios, horarios, citas y usuarios, con acceso a panel de control.
 
 ## Tecnologías Utilizadas
 
