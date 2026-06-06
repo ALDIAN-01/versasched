@@ -48,7 +48,7 @@ public class CitaService {
     }
 
     /**
-     * Obtiene horarios disponibles usando un parámetro de fecha opcional.
+     * Obtiene horarios disponibles usando un parámetro de fecha.
      */
     public List<Horario> obtenerHorariosDisponibles(String fecha) {
         if (fecha == null || fecha.isBlank()) {

@@ -37,11 +37,11 @@ public class PerfilController {
 
     @PostMapping("/perfil/datos")
     public String actualizarDatos(@RequestParam String nombre,
-                                  @RequestParam String apellido,
-                                  @RequestParam String correo,
-                                  @RequestParam String telefono,
-                                  HttpSession session,
-                                  Model model) {
+                                @RequestParam String apellido,
+                                @RequestParam String correo,
+                                @RequestParam String telefono,
+                                HttpSession session,
+                                Model model) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
         if (usuario == null) return "redirect:/login";
